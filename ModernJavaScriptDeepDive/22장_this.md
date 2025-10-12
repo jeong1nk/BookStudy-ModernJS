@@ -107,3 +107,63 @@ foo.bind(bar)(); // bar
 ```
 
 ### 22.2.1. 일반 함수 호출
+- 기본적으로 this에는 전역 객체가 바인딩된다.
+```javascript
+function foo() {
+  console.log("foo's this: ", this);  // window
+  function bar() {
+    console.log("bar's this: ", this); // window
+  }
+  bar();
+}
+foo();
+```
+- 전역 함수는 물론이고 중첩 함수, 콜백 함수 등 **어떠한 함수라도 일반 함수로 호출하면 함수 내부의 this에는 전역 객체가 바인딩된다.**
+```javascript
+// var 키워드로 선언한 전역 변수 value는 전역 객체의 프로퍼티다.
+var value = 1;
+// const 키워드로 선언한 전역 변수 value는 전역 객체의 프로퍼티가 아니다.
+// const value = 1;
+
+const obj = {
+  value: 100,
+  foo() {
+    console.log("foo's this: ", this);  // {value: 100, foo: ƒ}
+    console.log("foo's this.value: ", this.value); // 100
+
+    // 메서드 내에서 정의한 중첩 함수
+    function bar() {
+      console.log("bar's this: ", this); // window
+      console.log("bar's this.value: ", this.value); // 1
+    }
+
+    // 메서드 내에서 정의한 중첩 함수도 일반 함수로 호출되면 중첩 함수 내부의 this에는 전역 객체가 바인딩된다.
+    bar();
+  }
+};
+
+obj.foo();
+```
+```javascript
+var value = 1;
+
+const obj = {
+  value: 100,
+  foo() {
+    console.log("foo's this: ", this); // {value: 100, foo: ƒ}
+    // 콜백 함수 내부의 this에는 전역 객체가 바인딩된다.
+    setTimeout(function () {
+      console.log("callback's this: ", this); // window
+      console.log("callback's this.value: ", this.value); // 1
+    }, 100);
+  }
+};
+
+obj.foo();
+```
+- 메서드 내부의 중첩 함수나 콜백 함수의 this 바인딩을 메서드의 this 바인딩과 일치시키 위해서는 다음과 같이 하면 된다.
+
+- 위 방법 이외에도 자바스크립트는 this를 명시적으로 바인딩할 수 있는 `Function.prototype.apply`, `Function.prototype.call`, `Function.prototype.bind` 메서드를 제공한다.
+- 또는 화살표 함수를 사용해 this 바인딩을 일치시킬 수도 있다.
+
+### 22.2.2. 메서드 호
