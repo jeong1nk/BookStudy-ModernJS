@@ -166,4 +166,64 @@ obj.foo();
 - 위 방법 이외에도 자바스크립트는 this를 명시적으로 바인딩할 수 있는 `Function.prototype.apply`, `Function.prototype.call`, `Function.prototype.bind` 메서드를 제공한다.
 - 또는 화살표 함수를 사용해 this 바인딩을 일치시킬 수도 있다.
 
-### 22.2.2. 메서드 호
+### 22.2.2. 메서드 호출
+- 메서드 내부의 this에는 메서드를 호출한 객체, 즉 메서드를 호출할 때 메서드 이름 앞의 마침표(.) 연산자 앞에 기술한 객체가 바인딩 된다.
+- 주의할 점은 메서드를 호출한 객체에 바인딩 된다는 점이다.
+```javascript
+const person = {
+  name: 'Lee',
+  getName() {
+    // 메서드 내부의 this는 메서드를 호출한 객체에 바인딩된다.
+    return this.name;
+  }
+};
+
+// 메서드 getName을 호출한 객체는 person이다.
+console.log(person.getName()); // Lee
+```
+- 위의 예제에서 getName 프로퍼티가 가리키는 함수 객체는 person 객체에 포함된 것이 아니라 독립적으로 존재하는 별도의 객체이다.
+- 따라서 getNatme 프로퍼티가 가리키는 함수 객체, 즉 getName 메서드는 다른 객체의 프로퍼티에 할당하는 것으로 다른 객체의 메서드가 될 수도 있고 일반 변수에 할당하여 일반 함수로 호출될 수도 있다.
+```javascript
+const anotherPerson = {
+  name: 'Kim'
+};
+// getName 메서드를 anotherPerson 객체의 메서드로 할당
+anotherPerson.getName = person.getName;
+
+// getName 메서드를 호출한 객체는 anotherPerson이다.
+console.log(anotherPerson.getName()); // Kim
+
+// getName 메서드를 변수에 할당
+const getName = person.getName;
+
+// getName 메서드를 일반 함수로 호출
+console.log(getName()); // ''
+// 일반 함수로 호출된 getName 함수 내부의 this.name은 브라우저 환경에서 window.name과 같다.
+// 브라우저 환경에서 window.name은 브라우저 창의 이름을 나타내는 빌트인 프로퍼티이며 기본값은 ''이다.
+// Node.js 환경에서 this.name은 undefined다.
+```
+- 그러므로 메서드 내부의 this는 프로퍼티로 메서드를 가리키고 있는 객체와는 관계가 없고 메서드를 호출한 객체에 바인딩 된다.
+- 프로토타입 메서드 내부에서 사용된 this도 일반 메서드와 마찬가지로 해당 메서드를 호출한 객체에 바인딩된다.
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.getName = function () {
+  return this.name;
+};
+
+const me = new Person('Lee');
+
+// getName 메서드를 호출한 객체는 me다.
+console.log(me.getName()); // ① Lee
+
+Person.prototype.name = 'Kim';
+
+// getName 메서드를 호출한 객체는 Person.prototype이다.
+console.log(Person.prototype.getName()); // ② Kim
+```
+
+### 22.2.3. 생성자 함수 호출
+
+- 
