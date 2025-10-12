@@ -225,5 +225,89 @@ console.log(Person.prototype.getName()); // ② Kim
 ```
 
 ### 22.2.3. 생성자 함수 호출
+- 생성자 함수 내부 this에는 생성자 함수가 (미래에) 생성할 인스턴스가 바인딩된다.
+```javascript
+// 생성자 함수
+function Circle(radius) {
+  // 생성자 함수 내부의 this는 생성자 함수가 생성할 인스턴스를 가리킨다.
+  this.radius = radius;
+  this.getDiameter = function () {
+    return 2 * this.radius;
+  };
+}
 
-- 
+// 반지름이 5인 Circle 객체를 생성
+const circle1 = new Circle(5);
+// 반지름이 10인 Circle 객체를 생성
+const circle2 = new Circle(10);
+
+console.log(circle1.getDiameter()); // 10
+console.log(circle2.getDiameter()); // 20
+```
+
+### 22.2.4. Function.prototype.apply/call/bind 메서드에 의한 간접 호출
+- 이들 메서드는 Function.prototype의 메서드이므로, 모든 함수가 상속받아 사용할 수 있다.
+- `Function.prototype.apply`, `Function.prototype.call`메서드는 사용할 객체와 인수 리스트를 인수로 전달받아 **함수를 호출한다.**
+```
+/**
+* 주어진 this 바인딩과 인수 리스트 배열을 사용하여 함수를 호출한다.  
+* @param thisArg - this로 사용할 객체
+* @param argsArray - 함수에게 전달할 인수 리스트의 배열 또는 유사 배열 객체
+* @returns 호출된 함수의 반환값
+*/
+Function.prototype.apply(thisArg[, argsArray])
+
+/**
+* 주어진 this 바인딩과 ,로 구분된 인수 리스트를 사용하여 함수를 호출한다.  
+* @param thisArg - this로 사용할 객체
+* @param arg1, arg2, ...- 함수에게 전달할 인수 리스트
+* @returns 호출된 함수의 반환값
+*/
+Function.prototype.call(thisArg[, arg1[, arg2[, ...]]])
+```
+```javascript
+function getThisBinding() {
+  return this;
+}
+
+// this로 사용할 객체
+const thisArg = { a: 1 };
+
+console.log(getThisBinding()); // window
+
+// getThisBinding 함수를 호출하면서 인수로 전달한 객체를 getThisBinding 함수의 this에 바인딩한다.
+console.log(getThisBinding.apply(thisArg)); // {a: 1}
+console.log(getThisBinding.call(thisArg)); // {a: 1}
+```
+- apply와 call 메서드는 함수를 호출하면서 첫 번째 인수로 전달한 특정객체를 호출한 함수의 this에 바인딩한다.
+<br />
+
+- `Function.prototype.bind` 메서드는 함수를 호출하지 않고, **첫 번째 인수로 전달한 값으로 this 바인딩이 교체된 함수를 새롭게 생성해 반환한다.**
+```javascript
+function getThisBinding() {
+  return this;
+}
+
+// this로 사용할 객체
+const thisArg = { a: 1 };
+
+// bind 메서드는 첫 번째 인수로 전달한 thisArg로 this 바인딩이 교체된
+// getThisBinding 함수를 새롭게 생성해 반환한다.
+console.log(getThisBinding.bind(thisArg)); // getThisBinding
+// bind 메서드는 함수를 호출하지는 않으므로 명시적으로 호출해야 한다.
+console.log(getThisBinding.bind(thisArg)()); // {a: 1}
+```
+- bind 메서드는 메서드의 this와 메서드 내부의 중첩 함수 또는 콜백 함수의 this가 불일치 하는 문제를 해결하기 위해 유용하게 사용된다.
+```javascript
+const person = {
+  name: 'Lee',
+  foo(callback) {
+    // bind 메서드로 callback 함수 내부의 this 바인딩을 전달
+    setTimeout(callback.bind(this), 100);
+  }
+};
+
+person.foo(function () {
+  console.log(`Hi! my name is ${this.name}.`); // Hi! my name is Lee.
+});
+```
