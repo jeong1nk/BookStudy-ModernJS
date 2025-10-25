@@ -165,3 +165,56 @@ console.log(obj[symbolKey1]); // 1
 ```
 
 # 33.6. 심벌과 표준 빌트인 객체 확장
+- 일반적으로 표준 빌트인 객체에 사용자 정의 메서드를 직접 추가하여 확장하는 것은 권장하지 않는다. 표준 빌트인 객체는 읽기 전용으로 사용하는 것이 좋다.
+```javascript
+// 표준 빌트인 객체를 확장하는 것은 권장하지 않는다.
+Array.prototype.sum = function () {
+  return this.reduce((acc, cur) => acc + cur, 0);
+};
+
+[1, 2].sum(); // -> 3
+```
+- 하지만 중복될 가능성이 없는 심벌 값으로 프로퍼티 키를 새성하여 표준 빌트인 객체를 확장하면 표준 빌트인 객체의 기존 프로퍼티 키와 충돌하지 않는 것은 물론, 표준 사양의 버전이 올라감에 따라 추가될지 모르는 어떤 프로퍼티 키와도 충돌할 위험이 없어 안전하게 표준 빌트인 객체를 확장할 수 있다.
+```javascript
+// 심벌 값으로 프로퍼티 키를 동적 생성하면 다른 프로퍼티 키와 절대 충돌하지 않아 안전하다.
+Array.prototype[Symbol.for('sum')] = function () {
+  return this.reduce((acc, cur) => acc + cur, 0);
+};
+
+[1, 2][Symbol.for('sum')](); // -> 3
+```
+
+# 33.7. Well-known Symbol
+- 🏷️**Well-known Symbol: 자바스크립트가 기본 제공하는 빌트인 심벌 값**으로, ECMAScript 사양에서 Well-known Symbol라고 부른다.
+- Well-known Symbol은 자바스크립트 엔진의 내부 알고리즘에 사용된다. 이는 브라우저 콘솔에서 Symbol 함수를 참조하면 확인해볼 수 있다.
+```javascript
+Symbol
+{
+  for: function Symbol.for(key),
+  keyFor: function Symbol.keyFor(sym),
+
+  asyncIterator: Symbol(Symbol.asyncIterator),
+  hasInstance: Symbol(Symbol.hasInstance),
+  isConcatSpreadable: Symbol(Symbol.isConcatSpreadable),
+  iterator: Symbol(Symbol.iterator),
+  match: Symbol(Symbol.match),
+  matchAll: Symbol(Symbol.matchAll),
+  replace: Symbol(Symbol.replace),
+  search: Symbol(Symbol.search),
+  split: Symbol(Symbol.split),
+  species: Symbol(Symbol.species),
+  toPrimitive: Symbol(Symbol.toPrimitive),
+  toStringTag: Symbol(Symbol.toStringTag),
+  unscopables: Symbol(Symbol.unscopables),
+  dispose: Symbol(Symbol.dispose),
+  asyncDispose: Symbol(Symbol.asyncDispose),
+
+  prototype: Symbol.prototype,
+
+  length: 0,
+  name: "Symbol",
+  description: undefined,
+
+  [Symbol.toStringTag]: "Symbol",
+}
+```
