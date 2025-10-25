@@ -34,3 +34,66 @@ Number(false); // -> 0
 
 # 28.2. Number 프로퍼티
 ### 28.2.1. Number.EPSILON
+- ES6에서 도입되었으며, 1과 1보다 큰 숫자 중에서 가장 작은 숫자와의 차이와 같다.
+- 부동소수점 산술 연산은 정확한 결과를 기대하기 어렵기 때문에, Number.EPSILON은 부동소수점으로 인해 발생하는 오차르 해결하기 위해 사용한다.
+```javascript
+0.1 + 0.2;         // -> 0.30000000000000004
+0.1 + 0.2 === 0.3; // -> false
+```
+```javascript
+function isEqual(a, b){
+  // a와 b를 뺀 값의 절대값이 Number.EPSILON보다 작으면 같은 수로 인정한다.
+  return Math.abs(a - b) < Number.EPSILON;
+}
+
+isEqual(0.1 + 0.2, 0.3); // -> true
+```
+
+### 28.2.2. Number.MAX_VALUE
+- 자바스크립트에서 표현할 수 있는 가장 큰 양수 값이다.
+- Number.MAX_VALUE보다 큰 숫자는 Infinity다.
+```javascript
+Number.MAX_VALUE; // -> 1.7976931348623157e+308
+Infinity > Number.MAX_VALUE; // -> true
+```
+
+### 28.2.3. Number.MIN_VALUE
+- 자바스크립트에서 표현할 수 있는 가장 작은 양수 값이다.
+- Number.MIN_VALUE보다 작은 숫자는 0이다.
+```javascript
+Number.MIN_VALUE; // -> 5e-324
+Number.MIN_VALUE > 0; // -> true
+```
+
+### 28.2.4. Number.MAX_SAFE_INTEGER
+- 자바스크립트에서 안전하게 표현할 수 있는 가장 큰 정수값이다.
+```javascript
+Number.MAX_SAFE_INTEGER; // -> 9007199254740991
+```
+
+### 28.2.5. Number.MIN_SAFE_INTEGER
+- 자바스크립트에서 안전하게 표현할 수 있는 가장 작은 정수값이다.
+```javascript
+Number.MIN_SAFE_INTEGER; // -> -9007199254740991
+```
+
+### 28.2.6. Number.POSITIVE_INFINITY
+- 양의 무한대를 나타내는 숫자값 Infinity와 같다.
+```javascript
+Number.POSITIVE_INFINITY; // -> Infinity
+```
+
+### 28.2.7. Number.NEGATIVE_INFINITY
+- 음의 무한대를 나타내는 숫자값 -Infinity와 같다.
+```javascript
+Number.NEGATIVE_INFINITY; // -> -Infinity
+```
+
+### 28.2.8. Number.NaN
+- 숫자가 아님(Not-a-Number)을 나타내는 숫자값이다.
+- Number.Nan은 window.Nan과 같다.
+```javascript
+Number.NaN; // -> NaN
+```
+
+# 28.3. Number 메서드
