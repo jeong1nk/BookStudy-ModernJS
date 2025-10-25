@@ -157,4 +157,63 @@ Number.isNaN(undefined); // -> false
 isNaN(undefined); // -> true
 ```
 
-###  28.3.4. Number.isSafeInteger
+### 28.3.4. Number.isSafeInteger
+- ES6에서 도입되었으며, 인수로 전달된 숫자값이 안전한 정수인지 검사하여 그 결과를 불리언 값으로 반환한다.
+- 안전한 정수값은 -(2^53 - 1)과 2^53 - 1 사이의 정수값이다
+- 검사 전에 인수를 숫자로 암묵적 타입 변환하지 않는다.
+```javascript
+// 0은 안전한 정수이다.
+Number.isSafeInteger(0); // -> true
+// 1000000000000000은 안전한 정수이다.
+Number.isSafeInteger(1000000000000000); // -> true
+
+// 10000000000000001은 안전하지 않다.
+Number.isSafeInteger(10000000000000001); // -> false
+// 0.5은 정수가 아니다.
+Number.isSafeInteger(0.5); // -> false
+// '123'을 숫자로 암묵적 타입 변환하지 않는다.
+Number.isSafeInteger('123'); // -> false
+// false를 숫자로 암묵적 타입 변환하지 않는다.
+Number.isSafeInteger(false); // -> false
+// Infinity/-Infinity는 정수가 아니다.
+Number.isSafeInteger(Infinity); // -> false
+```
+
+### 28.3.5.prototype.toExponential
+- 숫자를 지수 표기법으로 변환하여 문자열로 반환한다.
+- 지수 표기법이란 매우 크거나 작은 숫잘르 표기할 때 주로 사용하며 e(Exponent) 앞에 있는 숫자에 10의 n승을 곱하는 형식으로 수를 나타내는 방식이다.
+- 인수로 소수점 이하로 표현할 자릿수를 전달할 수 있다.
+```javascript
+(77.1234).toExponential();  // -> "7.71234e+1"
+(77.1234).toExponential(4); // -> "7.7123e+1"
+(77.1234).toExponential(2); // -> "7.71e+1"
+```
+- 숫자 리터럴과 함께 Number 프로토타입 메서드르 사용할 경우 에러가 발생한다.
+```javascript
+77.toExponential(); // -> SyntaxError: Invalid or unexpected token
+```
+- 자바스크립트 엔진은 숫자 뒤의 .을 부동 소수점 숫자의 소수 구분 기호로 해석하지만, .toExponential()에서 . 앞의 숫자는 Number 래퍼 객체이다. 그러므로 .을 소수 구분 기호로 해석하면 프로퍼티로 해석할 수 없으므로 에러가 발생한다.
+```javascript
+77.1234.toExponential(); // -> "7.71234e+1"
+```
+- 위 예제의 경우 77. 다음에 숫자가 이어지므로 .은 명백하게 부동 소수점 숫자의 소수 구분 기호이다. 숫자에 소수점은 하나만 존재하기 때문이다.
+- 그러므로 두번째 .의 경우 프로퍼티 접근 연산자로 해석된다.
+- 따라서 숫자 리터럴과 함께 메서들르 사용할 경우 혼란 방지를 위해 그룹 연산자를 사용할 것을 권장한다.
+```javascript
+(77).toExponential(); // -> "7.7e+1"
+```
+
+### 28.3.6. 28.3.5.prototype.toFixed
+- 숫자를 반올림하여 문자열로 반환한다.
+- 반올림하는 소수점 이라 자릿수를 나타내는 0~20사이의 정수값을 인수로 전달할 수 있다.
+- 인수를 생략하면 기본값 0이 지정된다.
+```javascript
+// 소수점 이하 반올림. 인수를 생략하면 기본값 0이 지정된다.
+(12345.6789).toFixed(); // -> "12346"
+// 소수점 이하 1자리수 유효, 나머지 반올림
+(12345.6789).toFixed(1); // -> "12345.7"
+// 소수점 이하 2자리수 유효, 나머지 반올림
+(12345.6789).toFixed(2); // -> "12345.68"
+// 소수점 이하 3자리수 유효, 나머지 반올림
+(12345.6789).toFixed(3); // -> "12345.679"
+```
