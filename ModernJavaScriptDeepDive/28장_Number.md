@@ -97,3 +97,29 @@ Number.NaN; // -> NaN
 ```
 
 # 28.3. Number 메서드
+### 28.3.1. Number.isFinite
+- ES6에서 도입되었으며, 인수로 전달된 숫자값이 정상적인 유한수, 즉 Infinity 또는 -Infinity가 아닌지 검사하여 그 결과를 불리언 값으로 반환한다.
+```javascript
+// 인수가 정상적인 유한수이면 true를 반환한다.
+Number.isFinite(0);                // -> true
+Number.isFinite(Number.MAX_VALUE); // -> true
+Number.isFinite(Number.MIN_VALUE); // -> true
+
+// 인수가 무한수이면 false를 반환한다.
+Number.isFinite(Infinity);  // -> false
+Number.isFinite(-Infinity); // -> false
+```
+- 만약 인수가 NaN이면 언제나 false를반환한다.
+```javascript
+Number.isFinite(NaN); // -> false
+```
+- 빌트인 전역 함수 isFinite는 전달받은 인수를숫자로 암묵적 타입 변환하여 검사를 수행하지만 Number.isFinite는 전달받은 인수르숫자로 암묵적 타입 변환하지 않는다. 따라서 숫자가 아닌 인수가 주어졌을 때 반환값은 언제나 false다.
+```javascript
+// Number.isFinite는 인수를 숫자로 암묵적 타입 변환하지 않는다.
+Number.isFinite(null); // -> false
+
+// isFinite는 인수를 숫자로 암묵적 타입 변환한다. null은 0으로 암묵적 타입 변환된다.
+isFinite(null); // -> true
+```
+
+### 28.3.2. Number.isInteger
