@@ -113,7 +113,7 @@ Number.isFinite(-Infinity); // -> false
 ```javascript
 Number.isFinite(NaN); // -> false
 ```
-- 빌트인 전역 함수 isFinite는 전달받은 인수를숫자로 암묵적 타입 변환하여 검사를 수행하지만 Number.isFinite는 전달받은 인수르숫자로 암묵적 타입 변환하지 않는다. 따라서 숫자가 아닌 인수가 주어졌을 때 반환값은 언제나 false다.
+- 빌트인 전역 함수 isFinite는 전달받은 인수를 숫자로 암묵적 타입 변환하여 검사를 수행하지만 Number.isFinite는 전달받은 인수를 숫자로 암묵적 타입 변환하지 않는다. 따라서 숫자가 아닌 인수가 주어졌을 때 반환값은 언제나 false다.
 ```javascript
 // Number.isFinite는 인수를 숫자로 암묵적 타입 변환하지 않는다.
 Number.isFinite(null); // -> false
@@ -123,3 +123,38 @@ isFinite(null); // -> true
 ```
 
 ### 28.3.2. Number.isInteger
+- ES6에서 도입되었으며, 인수로 전달된 숫자값이 정수인지 검사하여 그 결과를 불리언 값으로 반환한다.
+- 검사하기 전에 인수를 숫자로 암묵적 타입 변환하지 않는다.
+```javascript
+// 인수가 정수이면 true를 반환한다.
+Number.isInteger(0)     // -> true
+Number.isInteger(123)   // -> true
+Number.isInteger(-123)  // -> true
+
+// 0.5는 정수가 아니다.
+Number.isInteger(0.5)   // -> false
+// '123'을 숫자로 암묵적 타입 변환하지 않는다.
+Number.isInteger('123') // -> false
+// false를 숫자로 암묵적 타입 변환하지 않는다.
+Number.isInteger(false) // -> false
+// Infinity/-Infinity는 정수가 아니다.
+Number.isInteger(Infinity)  // -> false
+Number.isInteger(-Infinity) // -> false
+```
+
+### 28.3.3. Number.isNaN
+- ES6에서 도입되었으며, 인수로 전달된 숫자값이 NaN인지 검사하여 그 결과를 불리언 값으로 반환한다.
+```javascript
+// 인수가 NaN이면 true를 반환한다.
+Number.isNaN(NaN); // -> true
+```
+- 빌트인 전역 함수 isNaN는 전달받은 인수를 숫자로 암묵적 타입 변환하여 검사를 수행하지만 Number.isNaN는 전달받은 인수를 숫자로 암묵적 타입 변환하지 않는다. 따라서 숫자가 아닌 인수가 주어졌을 때 반환값은 언제나 false다.
+```javascript
+// Number.isNaN은 인수를 숫자로 암묵적 타입 변환하지 않는다.
+Number.isNaN(undefined); // -> false
+
+// isFinite는 인수를 숫자로 암묵적 타입 변환한다. undefined는 NaN으로 암묵적 타입 변환된다.
+isNaN(undefined); // -> true
+```
+
+###  28.3.4. Number.isSafeInteger
