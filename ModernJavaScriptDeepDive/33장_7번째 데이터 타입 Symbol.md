@@ -134,3 +134,34 @@ obj[Symbol.for('mySymbol')]; // -> 1
 - **심벌 값은 유일무이한 값이므로 심벌 값으로 프로퍼티 값으로 프로퍼티 키를 만들면 다른 프로퍼티 키와 절대 충돌하지 않는다.** 기존 프로퍼티 키와 충돌하지 않는 것은 물론, 미래에 추가될 어떤 프로퍼티 키와도 충돌할 위험이 없다.
 
 # 33.5. 심벌과 프로퍼티 은닉
+- 심벌 값을 프로퍼티 키로 사용하여 생성한 프로퍼티는 for ...in 문이나 Object.keys, Object.getOwnPropertyNames 메서드로 찾을 수 없다.
+- **이처럼 심벌 값을 프로퍼티 키로 사용하여 프로퍼티를 생성하면 외부에 노출할 필요가 없는 프로퍼티를 은닉할 수 있다.**
+```javascript
+const obj = {
+  // 심벌 값으로 프로퍼티 키를 생성
+  [Symbol('mySymbol')]: 1
+};
+
+for (const key in obj) {
+  console.log(key); // 아무것도 출력되지 않는다.
+}
+
+console.log(Object.keys(obj)); // []
+console.log(Object.getOwnPropertyNames(obj)); // []
+```
+- 하지만 완전하게 숨길 수는 없다. ES6에서 도입된 Object.getOwnPropertySymbols 메서드를 사용하면 심벌 값을 프로퍼티 키로 사용하여 생성한 프로퍼티를 찾을 수 있다.
+```javascript
+const obj = {
+  // 심벌 값으로 프로퍼티 키를 생성
+  [Symbol('mySymbol')]: 1
+};
+
+// getOwnPropertySymbols 메서드는 인수로 전달한 객체의 심벌 프로퍼티 키를 배열로 반환한다.
+console.log(Object.getOwnPropertySymbols(obj)); // [Symbol(mySymbol)]
+
+// getOwnPropertySymbols 메서드로 심벌 값도 찾을 수 있다.
+const symbolKey1 = Object.getOwnPropertySymbols(obj)[0];
+console.log(obj[symbolKey1]); // 1
+```
+
+# 33.6. 심벌과 표준 빌트인 객체 확장
