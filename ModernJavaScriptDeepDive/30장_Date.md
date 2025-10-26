@@ -250,3 +250,128 @@ const today = new Date();
 today.setMilliseconds(123);
 today.getMilliseconds(); // -> 123
 ```
+
+### 30.2.19. Date.prototype.getTime
+- 1970년 1월 1일 00:00:00(UTC)를 기점으로 Date 객체의 시간까지 경과된 밀리초를 반환한다.
+```javascript
+new Date('2020/07/24/12:30').getTime(); // -> 1595561400000
+```
+
+### 30.2.20. Date.prototype.setTime
+- Date 객체에 1970년 1월 1일 00:00:00(UTC)를 기점으로 경과된 밀리초를 설정한다. 
+```javascript
+const today = new Date();
+
+// 1970년 1월 1일 00:00:00(UTC)를 기점으로 경과된 밀리초 설정
+today.setTime(86400000); // 86400000는 1day를 나타낸다.
+console.log(today); // -> Fri Jan 02 1970 09:00:00 GMT+0900 (대한민국 표준시)
+```
+
+### 30.2.21. Date.prototype.getTimezoneOffset
+- UTC와 Date 객체에 지정된 로컬(Locale) 시간과의 차이를 분 단위로 반환한다.
+- KST는 UTC에 9시간을 더한 시간이다. 즉 UTC = KST - 9h
+```javascript
+const today = new Date(); // today의 지정 로캘은 KST다.
+
+//UTC와 today의 지정 로캘 KST와의 차이는 -9시간이다.
+today.getTimezoneOffset() / 60; // -9
+```
+
+### 30.2.22. Date.prototype.toDateString
+- 사람이 읽을 수 있는 형식으로 문자열로 Date 객체의 날짜를 반환한다.
+```javascript
+const today = new Date('2020/7/24/12:30');
+
+today.toString();     // -> Fri Jul 24 2020 12:30:00 GMT+0900 (대한민국 표준시)
+today.toDateString(); // -> Fri Jul 24 2020
+```
+
+### 30.2.23. Date.prototype.toTimeString
+- 사람이 읽을 수 있는 형식으로 Date 객체의 시간을 표현한 문자열을 반환한다.
+```javascript
+const today = new Date('2020/7/24/12:30');
+
+today.toString();     // -> Fri Jul 24 2020 12:30:00 GMT+0900 (대한민국 표준시)
+today.toTimeString(); // -> 12:30:00 GMT+0900 (대한민국 표준시)
+```
+
+### 30.2.24. Date.prototype.toISOString
+- ISO 8601 형식으로 Date 객체의 시간을 표현한 문자열을 반환한다.
+```javascript
+const today = new Date('2020/7/24/12:30');
+
+today.toString();    // -> Fri Jul 24 2020 12:30:00 GMT+0900 (대한민국 표준시)
+today.toISOString(); // -> 2020-07-24T03:30:00.000Z
+
+today.toISOString().slice(0, 10); // -> 2020-07-24
+today.toISOString().slice(0, 10).replace(/-/g, ''); // -> 20200724
+```
+
+### 30.2.25. Date.prototype.toLocaleString
+- 인수로 전달한 로컬(Locale)을 기준으로 Date 객체의 날짜롸 시간을 표현한 문자열을 반환한다.
+- 인수를 생략한 경우 브라우저가 동작 중인 시스템의 로컬(Locale)을 적용한다.
+```javascript
+const today = new Date('2020/7/24/12:30');
+
+today.toString(); // -> Fri Jul 24 2020 12:30:00 GMT+0900 (대한민국 표준시)
+today.toLocaleString(); // -> 2020. 7. 24. 오후 12:30:00
+today.toLocaleString('ko-KR'); // -> 2020. 7. 24. 오후 12:30:00
+today.toLocaleString('en-US'); // -> 7/24/2020, 12:30:00 PM
+today.toLocaleString('ja-JP'); // -> 2020/7/24 12:30:00
+```
+
+### 30.2.26. Date.prototype.toLocaleTimeString
+- 인수로 전달한 로컬(Locale)을 기준으로 Date 객체의 시간을 표현한 문자열을 반환한다.
+- 인수를 생략한 경우 브라우저가 동작 중인 시스템의 로컬(Locale)을 적용한다.
+```javascript
+const today = new Date('2020/7/24/12:30');
+
+today.toString(); // -> Fri Jul 24 2020 12:30:00 GMT+0900 (대한민국 표준시)
+today.toLocaleTimeString(); // -> 오후 12:30:00
+today.toLocaleTimeString('ko-KR'); // -> 오후 12:30:00
+today.toLocaleTimeString('en-US'); // -> 12:30:00 PM
+today.toLocaleTimeString('ja-JP'); // -> 12:30:00
+```
+
+# 30.3. Date를 활용한 시계 예제
+- 다음 예제는 현재 날짜와 시간을 초 단위로 반복 출력한다.
+```javascript
+(function printNow() {
+  const today = new Date();
+
+  const dayNames = [
+    '(일요일)',
+    '(월요일)',
+    '(화요일)',
+    '(수요일)',
+    '(목요일)',
+    '(금요일)',
+    '(토요일)'
+  ];
+  // getDay 메서드는 해당 요일(0 ~ 6)을 나타내는 정수를 반환한다.
+  const day = dayNames[today.getDay()];
+
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const date = today.getDate();
+  let hour = today.getHours();
+  let minute = today.getMinutes();
+  let second = today.getSeconds();
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+
+  // 12시간제로 변경
+  hour %= 12;
+  hour = hour || 12; // hour가 0이면 12를 재할당
+
+  // 10미만인 분과 초를 2자리로 변경
+  minute = minute < 10 ? '0' + minute : minute;
+  second = second < 10 ? '0' + second : second;
+
+  const now = `${year}년 ${month}월 ${date}일 ${day} ${hour}:${minute}:${second} ${ampm}`;
+
+  console.log(now);
+
+  // 1초마다 printNow 함수를 재귀 호출한다. 41.2.1절 "setTimeout / clearTimeout" 참고
+  setTimeout(printNow, 1000);
+}());
+```
