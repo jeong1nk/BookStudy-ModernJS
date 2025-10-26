@@ -171,3 +171,82 @@ today.getDate(); // -> 1
 ```javascript
 new Date('2020/07/24').getDay(); // -> 5
 ```
+
+### 30.2.11. Date.prototype.getHours
+- Date 객체의 시간(0 ~ 23)을 나타내는 정수를 반환한다.
+```javascript
+new Date('2020/07/24/12:00').getHours(); // -> 12
+```
+
+### 30.2.12. Date.prototype.setHours
+- Date 객체의 시간(0 ~ 23)을 나타내는 정수를 설정한다.
+- 시간 이외에 옵션으로 분, 초, 밀리초도 설정할 수 있다.
+```javascript
+const today = new Date();
+
+// 시간 지정
+today.setHours(7);
+today.getHours(); // -> 7
+
+// 시간/분/초/밀리초 지정
+today.setHours(0, 0, 0, 0); // 00:00:00:00
+today.getHours(); // -> 0
+```
+
+### 30.2.13. Date.prototype.getMinutes
+- Date 객체의 분(0 ~59)을 나타내는 정수를 반환한다.
+```javascript
+new Date('2020/07/24/12:30').getMinutes(); // -> 30
+```
+
+### 30.2.14. Date.prototype.setMinutes
+- Date 객체의 분(0 ~59)을 나타내는 정수를 설정한다.
+- 분 이외에 옵션으로 초, 밀리초도 설정할 수 있다.
+```javascript
+const today = new Date();
+
+// 분 지정
+today.setMinutes(50);
+today.getMinutes(); // -> 50
+
+// 분/초/밀리초 지정
+today.setMinutes(5, 10, 999); // HH:05:10:999
+today.getMinutes(); // -> 5
+```
+
+### 30.2.15. Date.prototype.getSeconds
+- Date 객체의 초(0 ~ 59)을 나타내는 정수를 반환한다.
+```javascript
+new Date('2020/07/24/12:30:10').getSeconds(); // -> 10
+```
+
+### 30.2.16. Date.prototype.setSeconds
+- Date 객체의 초(0 ~ 59)을 나타내는 정수를 설정한다.
+- 초 이외에 옵션으로 밀리초도 설정할 수 있다.
+```javascript
+const today = new Date();
+
+// 초 지정
+today.setSeconds(30);
+today.getSeconds(); // -> 30
+
+// 초/밀리초 지정
+today.setSeconds(10, 0); // HH:MM:10:000
+today.getSeconds(); // -> 10
+```
+
+### 30.2.17. Date.prototype.getMilliseconds
+- Date 객체의 밀리초(0 ~ 999)을 나타내는 정수를 반환한다.
+```javascript
+new Date('2020/07/24/12:30:10:150').getMilliseconds(); // -> 150
+```
+
+### 30.2.18. Date.prototype.setMilliseconds
+- Date 객체의 밀리초(0 ~ 999)을 나타내는 정수를 설정한다.
+```javascript
+const today = new Date();
+
+// 밀리초 지정
+today.setMilliseconds(123);
+today.getMilliseconds(); // -> 123
+```
