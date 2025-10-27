@@ -185,3 +185,108 @@ for (let i = 0; i < str.length; i++) {
 str.charAt(5); // -> ''
 ```
 - charAt 메서드와 유사한 문자열 메서드는 String.prototype.charCodeAt과 String.prototype.codePointAt이 있다.
+
+### 32.3.7. String.prototype.substring
+- 대상 문자열에서 첫 번째 인수로 전달받은 인덱스에 위치하는 문자부터 두 번째 인수로 전달받은 인덱스에 위치하는 문자의 바로 이전 문자까지의 부분 문자열을 반환한다.
+```javascript
+const str = 'Hello World';
+
+// 인덱스 1부터 인덱스 4 이전까지의 부분 문자열을 반환한다.
+str.substring(1, 4); // -> ell
+```
+- 두 번째 인수는 생략할 수 있다. 이때 첫 번째 인수로 전달한  인덱스에 위치하는 문자부터 마지막 문자까지 부분 문자열을 반환한다.
+```javascript
+const str = 'Hello World';
+
+// 인덱스 1부터 마지막 문자까지 부분 문자열을 반환한다.
+str.substring(1); // -> 'ello World'
+```
+- substring 메서드의 첫 번째 인수는 두 번째 인수보다 작은 정수이어야 정상이다. 하지만 다음과 같이 인수를 전달하여도 정상 동작한다.
+  - 첫 번째 인수 > 두 번째 인수인 경우 두 인수는 교환된다.
+  - 인수 < 0 또는 NaN인 경우 0으로 취급된다.
+  - 인수 > 문자열의 길이(str.length)인 경우 인수는 문자열의 길이(str.length)로 취급된다.
+```javascript
+const str = 'Hello World'; // str.length == 11
+
+// 첫 번째 인수 > 두 번째 인수인 경우 두 인수는 교환된다.
+str.substring(4, 1); // -> 'ell'
+
+// 인수 < 0 또는 NaN인 경우 0으로 취급된다.
+str.substring(-2); // -> 'Hello World'
+
+// 인수 > 문자열의 길이(str.length)인 경우 인수는 문자열의 길이(str.length)으로 취급된다.
+str.substring(1, 100); // -> 'ello World'
+str.substring(20); // -> ''
+```
+- String.prototype.indexOf 메서드와 함께 사용하면 특정 문자열을 기준으로 앞뒤에 위치한 부분  문자열을 취득할 수 있다.
+```javascript
+const str = 'Hello World';
+
+// 스페이스를 기준으로 앞에 있는 부분 문자열 취득
+str.substring(0, str.indexOf(' ')); // -> 'Hello'
+
+// 스페이스를 기준으로 뒤에 있는 부분 문자열 취득
+str.substring(str.indexOf(' ') + 1, str.length); // -> 'World'
+```
+
+### 32.3.8. String.prototype.slice
+- substring 메서드와 동일하게 동작한다. 단, slice 메서드에는 음수인 인수를 전달할 수 있다.
+- 음수인 인수를 전달하면 대상 문자열의 가장 뒤에서부터 시작하여 문자열을 잘라내어 반환한다. 
+```javascript
+const str = 'hello world';
+
+// substring과 slice 메서드는 동일하게 동작한다.
+// 0번째부터 5번째 이전 문자까지 잘라내어 반환
+str.substring(0, 5); // -> 'hello'
+str.slice(0, 5); // -> 'hello'
+
+// 인덱스가 2인 문자부터 마지막 문자까지 잘라내어 반환
+str.substring(2); // -> 'llo world'
+str.slice(2); // -> 'llo world'
+
+// 인수 < 0 또는 NaN인 경우 0으로 취급된다.
+str.substring(-5); // -> 'hello world'
+// slice 메서드는 음수인 인수를 전달할 수 있다. 뒤에서 5자리를 잘라내어 반환한다.
+str.slice(-5); // ⟶ 'world'
+```
+
+### 32.3.9. String.prototype.toUpperCase
+- 대상 문자열을 모두 대문자로 변경한 문자열을 반환한다.
+```javascript
+const str = 'Hello World!';
+
+str.toUpperCase(); // -> 'HELLO WORLD!'
+```
+
+### 32.3.10. String.prototype.toLowerCase
+- 대상 문자열을 모두 소문자로 변경한 문자열을 반환한다.
+```javascript
+const str = 'Hello World!';
+
+str.toLowerCase(); // -> 'hello world!'
+```
+
+### 32.3.11. String.prototype.trim
+- 대상 문자열 앞뒤에 공백 문자가 있을 경우 이를 제거한 문자열을 반환한다.
+```javascript
+const str = '   foo  ';
+
+str.trim(); // -> 'foo'
+```
+- String.prototype.trimStart, String.prototype.trimEnd를사용하면 대상문자열 앞 또는 뒤에 공백 문자가  있을 경우 이를 제거한 문자열을 반환한다.
+```javascript
+const str = '   foo  ';
+
+// String.prototype.{trimStart,trimEnd} : Proposal stage 4
+str.trimStart(); // -> 'foo  '
+str.trimEnd();   // -> '   foo'
+```
+- String.prototype.replace 메서드에 정규 표현식을 인수로 전달하여 공백 문자를 제거할 수도 있다.
+```javascript
+const str = '   foo  ';
+
+// 첫 번째 인수로 전달한 정규 표현식에 매치하는 문자열을 두 번째 인수로 전달한 문자열로 치환한다.
+str.replace(/\s/g, '');   // -> 'foo'
+str.replace(/^\s+/g, ''); // -> 'foo  '
+str.replace(/\s+$/g, ''); // -> '   foo'
+```
