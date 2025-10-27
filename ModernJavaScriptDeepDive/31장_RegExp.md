@@ -100,3 +100,36 @@ target.match(regExp); // -> ["is", "is"]
 ```
 
 # 31.4. 플래그
+- 플래그는 패턴과 함께 정규 표현식을구성하며, 정규표현식의 검색 방식을 설정하기 위해 사용한다.
+- 플래그는 총 6가지가 있지만 지금은 3개의 플래그를 살펴보자.
+
+1. i(ignore case)
+- 대소문자를 구별하지 않고 패턴을 검색한다.
+2. g(Global)
+- 대상 문자열 내에서 패턴과 일치하는 모든 문자열을 전역 검색한다.   
+3. m(Multi line)
+- 문자열의행이 바뀌더라도 패턴 검색을 계속한다.
+
+- 플래그는 옵션이므로 선택적으로 사용할 수 있다. 또한, 순서와 상관없이 하나 이상의 플래그를 동시에 설정할 수도 있다. 
+- 어떠한 플래그도 사용하지 않은 경우 대소문자를 구별해서 패턴을 검색한다. 그리고 문자열에 패턴 검색 매칭 대상이 1개 이상 존재해도 첫 번째 매칭한 대상만 검색하고 종료한다.
+```javascript
+const target = 'Is this all there is?';
+
+// target 문자열에서 is 문자열을 대소문자를 구별하여 한 번만 검색한다.
+target.match(/is/);
+// -> ["is", index: 5, input: "Is this all there is?", groups: undefined]
+
+// target 문자열에서 is 문자열을 대소문자를 구별하지 않고 한 번만 검색한다.
+target.match(/is/i);
+// -> ["Is", index: 0, input: "Is this all there is?", groups: undefined]
+
+// target 문자열에서 is 문자열을 대소문자를 구별하여 전역 검색한다.
+target.match(/is/g);
+// -> ["is", "is"]
+
+// target 문자열에서 is 문자열을 대소문자를 구별하지 않고 전역 검색한다.
+target.match(/is/ig);
+// -> ["Is", "is", "is"]
+```
+
+# 31.5. 패턴
