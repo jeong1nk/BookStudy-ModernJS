@@ -290,3 +290,109 @@ str.replace(/\s/g, '');   // -> 'foo'
 str.replace(/^\s+/g, ''); // -> 'foo  '
 str.replace(/\s+$/g, ''); // -> '   foo'
 ```
+
+### 32.3.12. String.prototype.repeat
+- ES6에서 도입되었으며, 대상 문자열을 인수로 전달받은 정수만큼 반복해 연결한 새로운 문자열을 반환한다.
+- 인수로 전달받은 정수가 0이면 빈 문자열을 반환하고, 음수이면 RangeError를 발생시킨다.
+- 인수를 생략하면 기본값 0이 설정된다. 
+```javascript
+const str = 'abc';
+
+str.repeat();    // -> ''
+str.repeat(0);   // -> ''
+str.repeat(1);   // -> 'abc'
+str.repeat(2);   // -> 'abcabc'
+str.repeat(2.5); // -> 'abcabc' (2.5 → 2)
+str.repeat(-1);  // -> RangeError: Invalid count value
+```
+
+### 32.3.13. String.prototype.replace
+- 대상 문자열에서 첫 번째 인수로 전달받은 문자열 또는 정규 표현식을 검색하여 두 번째 인수로 전달한 문자열로 치환한 문자열을 반환한다.
+```javascript
+const str = 'Hello world';
+
+// str에서 첫 번째 인수 'world'를 검색하여 두 번째 인수 'Lee'로 치환한다.
+str.replace('world', 'Lee'); // -> 'Hello Lee'
+```
+- 검색된 문자열이 여럿 존재할 경우 첫 번째로 검색된 문자열만 치환한다.
+```javascript
+const str = 'Hello world world';
+
+str.replace('world', 'Lee'); // -> 'Hello Lee world'
+```
+- 특수한 교체 패턴을 사용할 수 있다. 예를 들어, $&는 검색된 문자열을 의미한다. 교체패턴에 대한 자세한 내용은 MDN의 함수 설명에서 참고하자.
+```javascript
+const str = 'Hello world';
+
+// 특수한 교체 패턴을 사용할 수 있다. ($& => 검색된 문자열)
+str.replace('world', '<strong>$&</strong>');
+```
+- replace 메서드의 첫 번째 인수로 정규 표현식을 전달할 수도 있다.
+```javascript
+const str = 'Hello Hello';
+
+// 'hello'를 대소문자를 구별하지 않고 전역 검색한다.
+str.replace(/hello/gi, 'Lee'); // -> 'Lee Lee'
+```
+- 두 번째 인수로 치환 함수를 전달할 수 있다. 첫번째 인수로 전달한 문자열 또는 정규 표현식에 매치한 결과를 두 번째 인수로 전달한 치환 함수의 인수로 전달하면서 호출하고 치환함수가 반환한 결과와 매치 결과를 치환한다.
+- 예를 들어 카멜 케이스를 스네이크 케이스로, 스네이크 케이스를 카멜 테이스로 변경하는 함수는 다음과 같다.
+```javascript
+// 카멜 케이스를 스네이크 케이스로 변환하는 함수
+function camelToSnake(camelCase) {
+  // /.[A-Z]/g는 임의의 한 문자와 대문자로 이루어진 문자열에 매치한다.
+  // 치환 함수의 인수로 매치 결과가 전달되고, 치환 함수가 반환한 결과와 매치 결과를 치환한다.
+  return camelCase.replace(/.[A-Z]/g, match => {
+    console.log(match); // 'oW'
+    return match[0] + '_' + match[1].toLowerCase();
+  });
+}
+
+const camelCase = 'helloWorld';
+camelToSnake(camelCase); // -> 'hello_world'
+
+// 스네이크 케이스를 카멜 케이스로 변환하는 함수
+function snakeToCamel(snakeCase) {
+  // /_[a-z]/g는 _와 소문자로 이루어진 문자열에 매치한다.
+  // 치환 함수의 인수로 매치 결과가 전달되고, 치환 함수가 반환한 결과와 매치 결과를 치환한다.
+  return snakeCase.replace(/_[a-z]/g, match => {
+    console.log(match); // '_w'
+    return match[1].toUpperCase();
+  });
+}
+
+const snakeCase = 'hello_world';
+snakeToCamel(snakeCase); // -> 'helloWorld'
+```
+
+### 32.3.14. String.prototype.split
+- 대상 문자열에서 첫 번째 이수로 전달한 문자열 또는 정규 표현식을 검색하여 문자열을 구분한 후 분리된 각 문자열로 이루어진 배열을 반환한다.
+- 인수로 빈 문자열을 전달하면 각 문자를 모두 분리하고, 인수를 생략하면 대상 문자열 전체를 단일 요소로 하는 배열을반환한다.
+```javascript
+const str = 'How are you doing?';
+
+// 공백으로 구분(단어로 구분)하여 배열로 반환한다.
+str.split(' '); // -> ["How", "are", "you", "doing?"]
+
+// \s는 여러 가지 공백 문자(스페이스, 탭 등)를 의미한다. 즉, [\t\r\n\v\f]와 같은 의미다.
+str.split(/\s/); // -> ["How", "are", "you", "doing?"]
+
+// 인수로 빈 문자열을 전달하면 각 문자를 모두 분리한다.
+str.split(''); // -> ["H", "o", "w", " ", "a", "r", "e", " ", "y", "o", "u", " ", "d", "o", "i", "n", "g", "?"]
+
+// 인수를 생략하면 대상 문자열 전체를 단일 요소로 하는 배열을 반환한다.
+str.split(); // -> ["How are you doing?"]
+```
+- 두 번째 인수로 배열의 길이를 지정할 수 있다.
+```javascript
+// 공백으로 구분하여 배열로 반환한다. 단, 배열의 길이는 3이다
+str.split(' ', 3); // -> ["How", "are", "you"]
+```
+- split 메서드는 배열을 반환한다. 따라서 Array.prototype.reverse, Array.prototype.join 메서드와 함께 사용하면 문자열을 역순으로 뒤집을 수 있다.
+```javascript
+// 인수로 전달받은 문자열을 역순으로 뒤집는다.
+function reverseString(str) {
+  return str.split('').reverse().join('');
+}
+
+reverseString('Hello world!'); // -> '!dlrow olleH'
+```
