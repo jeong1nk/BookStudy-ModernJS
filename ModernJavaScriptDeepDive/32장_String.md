@@ -48,4 +48,11 @@ String(false); // -> "false"
 ```
 
  # 32.2. length 프로퍼티
- 
+- length 프로퍼티는 문자열의 문자 개수를 반환한다.
+```javascript
+'Hello'.length;    // -> 5
+'안녕하세요!'.length; // -> 6
+```
+- String 래퍼 객체는 배열과 마찬가지로 length 프로퍼티를 갖는다. 그리고 인덱스를 나타내는 숫자를 프로퍼티 키로, 각 문자를 프로퍼티 값으로 가지므로 String래퍼 객체는 유사 배열 객체다.
+
+# 32.3. String 메서드
