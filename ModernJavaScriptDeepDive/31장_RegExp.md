@@ -18,3 +18,46 @@ regExp.test(tel); // -> false
 - 다만, 정규 표현식은 주석이나 공백을 허용하지 않고 여러 가지 기호를 혼합하여 사용하기 때문에 가독성이 좋지 않다는 문제가 있다.
 
 # 31.2. 정규 표현식의 생성
+- 정규 표현식 객체(RegExp 객체)를 생성하기 위해서는 정규 표현식 리터럴과 RegExp 생성자 함수를 사용할 수 있다.
+
+1. 정규 표현식 리터럴
+- `/regexp/i` : regexp = 패턴, i = 플래그 / = 시작,종료기호
+- 정규 표현식 리터럴은 패턴과 플래그로 구성된다.
+```javascript
+const target = 'Is this all there is?';
+
+// 패턴: is
+// 플래그: i => 대소문자를 구별하지 않고 검색한다.
+const regexp = /is/i;
+
+// test 메서드는 target 문자열에 대해 정규표현식 regexp의 패턴을 검색하여 매칭 결과를 불리언 값으로 반환한다.
+regexp.test(target); // -> true
+```
+
+2. RegExp 생성자 함수
+```javascript
+/**
+ * parttern: 정규 표현식의 패턴
+ * flags: 정규 표현식의 플래그(g, i, m, u, y)
+ */
+new RegExp(parttern[, flags])
+```
+```javascript
+const target = 'Is this all there is?';
+
+const regexp = new RegExp(/is/i); // ES6
+// const regexp = new RegExp(/is/, 'i');
+// const regexp = new RegExp('is', 'i');
+
+regexp.test(target); // -> true
+```
+- RegExp 생성자 함수를 사용하여 RegExp 객체를 생성할 수도 있다.
+- RegExp 생성자 함수를 사용하면 변수를 사용해 동적으로 RegExp 객체를 생성할 수 있다.
+```javascript
+const count = (str, char) => (str.match(new RegExp(char, 'gi')) ?? []).length;
+
+count('Is this all there is?', 'is'); // -> 3
+count('Is this all there is?', 'xx'); // -> 0
+```
+
+# 31.3 RegExp 메서드
