@@ -61,3 +61,42 @@ count('Is this all there is?', 'xx'); // -> 0
 ```
 
 # 31.3 RegExp 메서드
+- 정규표현식을 사용하는 메서드는 RegExp.prototype.exec, RegExp.prototype.test, RegExp.prototype.match, String.prototype.replace, String.prototype.search, String.prototype.split 등이 있다. String.- 메서드는 32장에서 다룰 예정
+
+### 31.3.1. RegExp.prototype.exec
+- 인수로 전달받은 문자열에 대해 정규 표현식의 패턴을 검색하여 매칭 결과를 배열로반환한다.
+- 매칭 결과가 없는 경우 null을 반환한다.
+```javascript
+const target = 'Is this all there is?';
+const regExp = /is/;
+
+regExp.exec(target); // -> ["is", index: 5, input: "Is this all there is?", groups: undefined]
+```
+- 문자열 내의 모든 패턴을 검색하는 g 플래그를 지정해도 첫 번째 매칭 결과만 반환하므로 주의 
+
+### 31.3.2. RegExp.prototype.test
+- 인수로 전달받은 문자열에 대해 정규 표현식의 패턴을 검색하여 매칭 결과를 불리언 값으로 반환한다.
+```javascript
+const target = 'Is this all there is?';
+const regExp = /is/;
+
+regExp.test(target); // -> true
+```
+
+### 31.3.3. String.prototype.match
+- String 표준 빌트인 객체가 제공하는 match 메서드는 대상 문자열과 인수로 전달받은 정규 표현식과의 매칭 결과를 배열로반환한다.
+```javascript
+const target = 'Is this all there is?';
+const regExp = /is/;
+
+target.match(regExp); // -> ["is", index: 5, input: "Is this all there is?", groups: undefined]
+```
+- exec 메서드는 문자열 내의 모든 패턴을 검색하는 g 플래그를 지정해도 첫 번째 매칭 결과만 반환한다. 하지만 String.prototype.match 메서드는 g 플래그가 지정되면모든 매칭 결과를 배열로 반환한다.
+```javascript
+const target = 'Is this all there is?';
+const regExp = /is/g;
+
+target.match(regExp); // -> ["is", "is"]
+```
+
+# 31.4. 플래그
