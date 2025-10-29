@@ -115,6 +115,44 @@ console.log(set.has(2)); // true
 console.log(set.has(4)); // false
 ```
 
-
 ### 37.1.5. 요소 삭제
-- 
+- Set 객체의 특정 요소를 삭제하려면 Set.prototype.delete 메서드를 사용한다. delete 메서드는 삭제 성공 여부를 나타내는 불리언 값을 반환한다.
+- delete 메서드에는 인덱스가 아니라 삭제하려는 요소 값을 인수로 전달해야한다.
+- Set 객체는 순서에 의미가 없다. 즉, 배열과 같이 인덱스를 갖지 않는다.
+```javascript
+const set = new Set([1, 2, 3]);
+
+// 요소 2를 삭제한다.
+set.delete(2);
+console.log(set); // Set(2) {1, 3}
+
+// 요소 1을 삭제한다.
+set.delete(1);
+console.log(set); // Set(1) {3}
+```
+- 만약 존재하지 않는 Set 객체의 요소를 삭제하려 하면 에러 없이 무시된다.
+```javascript
+const set = new Set([1, 2, 3]);
+
+// 존재하지 않는 요소 0을 삭제하면 에러없이 무시된다.
+set.delete(0);
+console.log(set); // Set(3) {1, 2, 3}
+```
+- delete 메서드는 삭제 성공 여부를 나타내느 불리언 값을 반환한다. 따라서 Set.prototype.add 메서드와 달리 연속적으로 호출할 수 없다.
+```javascript
+const set = new Set([1, 2, 3]);
+
+// delete는 불리언 값을 반환한다.
+set.delete(1).delete(2); // TypeError: set.delete(...).delete is not a function
+```
+
+### 37.1.6. 요소 일괄 삭제
+- Set 객체의 모든 요소를 일괄 삭제하려면 Set.prototype.clear 메서드를 사용한다. clear 메서드는 언제나 undefined를 반환한다.
+```javascript
+const set = new Set([1, 2, 3]);
+
+set.clear();
+console.log(set); // Set(0) {}
+```
+
+### 37.1.7. 요소 순회
