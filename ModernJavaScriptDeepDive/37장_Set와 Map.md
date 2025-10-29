@@ -51,3 +51,70 @@ console.log(set.size); // 3
 ```
 
 ### 37.1.3. 요소 추가
+- Set 객체에 요소르 추가할때는 Set.prototype.add 메서드를 사용한다.
+```javascript
+const set = new Set();
+console.log(set); // Set(0) {}
+
+set.add(1);
+console.log(set); // Set(1) {1}
+```
+- add 메서드는 새로운 요소가 추가된 Set 객체를 반환한다. 따라서 add 메서드를 호출한 후에 add 메서드를 연속적으로 호출할 수 있다.
+```javascript
+const set = new Set();
+
+set.add(1).add(2);
+console.log(set); // Set(2) {1, 2}
+```
+- Set 객체에 중복된 요소의 추가는 허용되지 않는다. 이때 에러가 발생하지는 않고 무시된다.
+```javascript
+const set = new Set();
+
+set.add(1).add(2).add(2);
+console.log(set); // Set(2) {1, 2}
+```
+- 일치 비교 연산자 ===을 사용하면 NaN과 NaN을 다르다고 평가한다. 하지만 Set 객체는 NaN과 NaN을 같다고 평가하여 중복 추가를 허용하지 않는다.
+- +0과 =0은 일치 비교 연산자 ===와 마찬가지로 가다고 평가하여 중복 추가를 허용하지 않는다.
+```javascript
+const set = new Set();
+
+console.log(NaN === NaN); // false
+console.log(0 === -0); // true
+
+// NaN과 NaN을 같다고 평가하여 중복 추가를 허용하지 않는다.
+set.add(NaN).add(NaN);
+console.log(set); // Set(1) {NaN}
+
+// +0과 -0을 같다고 평가하여 중복 추가를 허용하지 않는다.
+set.add(0).add(-0);
+console.log(set); // Set(2) {NaN, 0}
+```
+- Set 객체는 객체나 배열과 같이 자바스크립트의 모든 값을 요소로 저장할 수 있다.
+```javascript
+const set = new Set();
+
+set
+  .add(1)
+  .add('a')
+  .add(true)
+  .add(undefined)
+  .add(null)
+  .add({})
+  .add([]);
+
+console.log(set); // Set(7) {1, "a", true, undefined, null, {}, []}
+```
+
+### 37.1.4. 요소 존재 여부 확인
+- Set 객체에 특정 요소가 존재하는지 확인하여면 Set.prototype.has 메서드를 사용한다.
+- has 메서드는 특별 요소의 존재 여부를 나타내는 불리언 값을 반환한다.
+```javascript
+const set = new Set([1, 2, 3]);
+
+console.log(set.has(2)); // true
+console.log(set.has(4)); // false
+```
+
+
+### 37.1.5. 요소 삭제
+- 
