@@ -158,9 +158,11 @@ console.log(set); // Set(0) {}
 ### 37.1.7. 요소 순회
 - Set 객체의 요소를 순회하려면 Set.prototype.forEach 메서드를 사용한다.
 - Set.prototype.forEach 메서드는 Array.prototype.forEach 메서드와 유사하게 콜백 함수와 forEach 메서드의 콜백 함수 내부에서 this로 사용될 객체(옵션)를 인수로 전달한다. 이때 콜백함수는 다음과 같이 3개의 인수를 전달받는다.
+
   1. 첫 번째 인수: 현재 순회중인 요소값
   2. 두 번째 인수: 현재 순회중인 요소값
   3. 세 번째 인수: 현재 순회 중인 Set 객체 자체
+    
 - 첫 번째와 두 번째 인수는 같은 값이다. 이는 Array.prototype.forEach 메서드와 인터페이스를 통일하기 위함이며 다른 의미는 없다.
 - Array.prototype.forEach 메서드의 콜백 함수는 두 번째 인수로 현재 순회 중인 요소의 인덱스를전달 받는다. 하지만 Set 객체는 순서에 의미가 없어 배열과 같이 인덱스를 갖지 않는다.
 ```javascript
@@ -351,6 +353,7 @@ console.log(setB.isSuperset(setA)); // false
 
 # 37.2. Map
 - **🏷️Map 객체: 키와 값의 쌍으로 이루어진 컬렉션**. 객체 유사하지만 다음과 같은 차이가 있다.
+
 | 구분 | 객체 | Map 객체 |
 |------|------|-----------|
 | 키로 사용할 수 있는 값 | 문자열 또는 심벌 값 | 객체를 포함한 모든 값 |
@@ -579,11 +582,13 @@ const [a, b] = map;
 console.log(a, b); // [{name: "Lee"}, "developer"]  [{name: "Kim"}, "designer"]
 ```
 - Map 객체는 이터러블이면서 동시에 이터레이터인 객체를 반환하는 메서드를 제공한다.
+
 | Map 메서드 | 설명 |
 |-------------|------|
 | Map.prototype.keys | Map 객체에서 요소 키를 값으로 갖는 이터러블이면서 동시에 이터레이터인 객체를 반환한다. |
 | Map.prototype.values | Map 객체에서 요소 값을 값으로 갖는 이터러블이면서 동시에 이터레이터인 객체를 반환한다. |
 | Map.prototype.entries | Map 객체에서 요소 키와 요소 값을 값으로 갖는 이터러블이면서 동시에 이터레이터인 객체를 반환한다. |
+
 ```javascript
 const lee = { name: 'Lee' };
 const kim = { name: 'Kim' };
