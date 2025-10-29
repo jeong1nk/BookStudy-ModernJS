@@ -486,3 +486,46 @@ console.log(map.has(lee)); // true
 console.log(map.has('key')); // false
 ```
  
+### 37.2.6. 요소 삭제
+- Map 객체의 요소를 삭제하려면 Map.prototype.delete 메서드를 사용한다.
+- delete 메서드는 삭제 성공 여부를 나타내는 불리언 값을 반환한다.
+```javascript
+const lee = { name: 'Lee' };
+const kim = { name: 'Kim' };
+
+const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+
+map.delete(kim);
+console.log(map); // Map(1) { {name: "Lee"} => "developer" }
+```
+- 만약 존재하지 않는 키로 Map 객체의 요소를 삭제하려 하면 에러 없이 무시된다.
+```javascript
+const map = new Map([['key1', 'value1']]);
+
+// 존재하지 않는 키 'key2'로 요소를 삭제하려 하면 에러없이 무시된다.
+map.delete('key2');
+console.log(map); // Map(1) {"key1" => "value1"}
+```
+- delete 메서드는 삭제 성공 여부를  타나내는 불리언 값을 반환한다. 따라서 set 메서드와 달리 연속적으로 호출할 수 없다.
+```javascript
+const lee = { name: 'Lee' };
+const kim = { name: 'Kim' };
+
+const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+
+map.delete(lee).delete(kim); // TypeError: map.delete(...).delete is not a function
+```
+
+### 37.2.7. 요소 일괄 삭제
+- Map 객체의 요소를 일괄 삭제하려면 Map.prptptype.clear 메서드를 사용한다. clear 메서드는 언제나 undefined를 반환한다.
+```javascript
+const lee = { name: 'Lee' };
+const kim = { name: 'Kim' };
+
+const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+
+map.clear();
+console.log(map); // Map(0) {}
+```
+
+### 37.2.8. 요소 순회
