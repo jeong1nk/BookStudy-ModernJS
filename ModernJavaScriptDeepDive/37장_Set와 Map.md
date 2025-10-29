@@ -163,10 +163,191 @@ console.log(set); // Set(0) {}
   3. 세 번째 인수: 현재 순회 중인  Set 객체 자체
 - 첫 번째와 두 번째 인수는 같은 값이다. 이는 Array.prototype.forEach 메서드와 인터페이스를 통일하기 위함이며 다른 의미는 없다.
 - Array.prototype.forEach 메서드의 콜백 함수는 두 번째 인수로 현재 순회 중인 요소의 인덱스를전달 받는다. 하지만 Set 객체는 순서에 의미가 없어 배열과 같이 인덱스를 갖지 않는다.
+```javascript
+const set = new Set([1, 2, 3]);
 
+set.forEach((v, v2, set) => console.log(v, v2, set));
+/*
+1 1 Set(3) {1, 2, 3}
+2 2 Set(3) {1, 2, 3}
+3 3 Set(3) {1, 2, 3}
+*/
+```
 - **Set 객체는 이터러블이다.** 따라서 for ...of 문으로 순회할 수 있으며,  스프레드 문법과 배열 디스트럭처링의 대상이 될 수도 있다.
+```javascript
+const set = new Set([1, 2, 3]);
 
+// Set 객체는 Set.prototype의 Symbol.iterator 메서드를 상속받는 이터러블이다.
+console.log(Symbol.iterator in set); // true
+
+// 이터러블인 Set 객체는 for...of 문으로 순회할 수 있다.
+for (const value of set) {
+  console.log(value); // 1 2 3
+}
+
+// 이터러블인 Set 객체는 스프레드 문법의 대상이 될 수 있다.
+console.log([...set]); // [1, 2, 3]
+
+// 이터러블인 Set 객체는 배열 디스트럭처링 할당의 대상이 될 수 있다.
+const [a, ...rest] = [...set];
+console.log(a, rest); // 1, [2, 3]
+```
 - Set 객체는 요소의 순서에 의미를 갖지 않지만 Set 객체를 순회ㅏ는 순서는 요소가 추가된 순서를 따른다.
 - 이는 ECMAScript 사양에 규정되어 있지는 않지만 다른 이터러블의 순회화 호환성을 유지 하기 위함이다.
 
 ### 37.1.8. 집합 연산
+- Set 객체는 수학적 집합을 구현하기 위한 자료구조다. 따라서 Set 객체를 통해 교집합, 합집합, 차집합 등을 구현할 수 있다.
+
+#### 교집합
+- 교집합은 집합 A와 집합 B의 공통 요소로 구성된다.
+```javascript
+Set.prototype.intersection = function (set) {
+  const result = new Set();
+
+  for (const value of set) {
+    // 2개의 set의 요소가 공통되는 요소이면 교집합의 대상이다.
+    if (this.has(value)) result.add(value);
+  }
+
+  return result;
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA와 setB의 교집합
+console.log(setA.intersection(setB)); // Set(2) {2, 4}
+// setB와 setA의 교집합
+console.log(setB.intersection(setA)); // Set(2) {2, 4}
+```
+- 또는 다음과 같은 방법으로도 가능한다.
+```javascript
+Set.prototype.intersection = function (set) {
+  return new Set([...this].filter(v => set.has(v)));
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA와 setB의 교집합
+console.log(setA.intersection(setB)); // Set(2) {2, 4}
+// setB와 setA의 교집합
+console.log(setB.intersection(setA)); // Set(2) {2, 4}
+```
+
+#### 합집합
+- 합집합은 집합 A와 집합 B의 중복 없는 모든 요소로 구성된다.
+```javascript
+Set.prototype.union = function (set) {
+  // this(Set 객체)를 복사
+  const result = new Set(this);
+
+  for (const value of set) {
+    // 합집합은 2개의 Set 객체의 모든 요소로 구성된 집합이다. 중복된 요소는 포함되지 않는다.
+    result.add(value);
+  }
+
+  return result;
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA와 setB의 합집합
+console.log(setA.union(setB)); // Set(4) {1, 2, 3, 4}
+// setB와 setA의 합집합
+console.log(setB.union(setA)); // Set(4) {2, 4, 1, 3}
+```
+- 또는 다음과 같은 방법으로도 가능한다.
+```javascript
+Set.prototype.union = function (set) {
+  return new Set([...this, ...set]);
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA와 setB의 합집합
+console.log(setA.union(setB)); // Set(4) {1, 2, 3, 4}
+// setB와 setA의 합집합
+console.log(setB.union(setA)); // Set(4) {2, 4, 1, 3}
+```
+
+#### 차집합
+- 차집합은 집합 A에는 존재하지만 집합 B에는 존재하지 않는 요소로 구성된다.
+```javascript
+Set.prototype.difference = function (set) {
+  // this(Set 객체)를 복사
+  const result = new Set(this);
+
+  for (const value of set) {
+    // 차집합은 어느 한쪽 집합에는 존재하지만 다른 한쪽 집합에는 존재하지 않는 요소로 구성된 집합이다.
+    result.delete(value);
+  }
+
+  return result;
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA에 대한 setB의 차집합
+console.log(setA.difference(setB)); // Set(2) {1, 3}
+// setB에 대한 setA의 차집합
+console.log(setB.difference(setA)); // Set(0) {}
+```
+- 또는 다음과 같은 방법으로도 가능한다.
+```javascript
+Set.prototype.difference = function (set) {
+  return new Set([...this].filter(v => !set.has(v)));
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA에 대한 setB의 차집합
+console.log(setA.difference(setB)); // Set(2) {1, 3}
+// setB에 대한 setA의 차집합
+console.log(setB.difference(setA)); // Set(0) {}
+```
+
+#### 부분 집합과 상위 집합
+- 집합 A가 집합 B에 포함되는 경우 집합 A는 집합 B의 부분 집합이며, 집합 B는 집합 A의 상위 집합이다.
+```javascript
+// this가 subset의 상위 집합인지 확인한다.
+Set.prototype.isSuperset = function (subset) {
+  for (const value of subset) {
+    // superset의 모든 요소가 subset의 모든 요소를 포함하는지 확인
+    if (!this.has(value)) return false;
+  }
+
+  return true;
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA가 setB의 상위 집합인지 확인한다.
+console.log(setA.isSuperset(setB)); // true
+// setB가 setA의 상위 집합인지 확인한다.
+console.log(setB.isSuperset(setA)); // false
+```
+- 또는 다음과 같은 방법으로도 가능한다.
+```javascript
+// this가 subset의 상위 집합인지 확인한다.
+Set.prototype.isSuperset = function (subset) {
+  const supersetArr = [...this];
+  return [...subset].every(v => supersetArr.includes(v));
+};
+
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([2, 4]);
+
+// setA가 setB의 상위 집합인지 확인한다.
+console.log(setA.isSuperset(setB)); // true
+// setB가 setA의 상위 집합인지 확인한다.
+console.log(setB.isSuperset(setA)); // false
+```
+
+# 37.2. Map
+
