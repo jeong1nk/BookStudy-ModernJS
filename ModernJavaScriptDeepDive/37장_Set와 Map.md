@@ -455,4 +455,34 @@ map
 console.log(map);
 // Map(2) { {name: "Lee"} => "developer", {name: "Kim"} => "designer" }
 ```
-- 
+
+### 37.2.4. 요소 취득
+- Map 객체에서 특정 요소를 취득하려면 Map.prototype.get 메서드를 사용한다. get 메서드의 인수로 키를 전달하면 Map 객체에서 인수로 전달한 키를 갖는 값을 반환한다.
+- Map 객체에서 인수로 전달한 키를 갖는 요소가 존재하지 않으면 undefined를 반환한다.
+```javascript
+const map = new Map();
+
+const lee = { name: 'Lee' };
+const kim = { name: 'Kim' };
+
+map
+  .set(lee, 'developer')
+  .set(kim, 'designer');
+
+console.log(map.get(lee)); // developer
+console.log(map.get('key')); // undefined
+```
+
+### 37.2.5. 요소 존재 여부 확인
+- Map 객체에 특정 요소가 존재하는지 확인하여면 Map.prototype.has 메서드를 사용한다.
+- has 메서드는 특정 요소의 존재여부를 나타내는 불리언 값을 반환한다.
+```javascript
+const lee = { name: 'Lee' };
+const kim = { name: 'Kim' };
+
+const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+
+console.log(map.has(lee)); // true
+console.log(map.has('key')); // false
+```
+ 
