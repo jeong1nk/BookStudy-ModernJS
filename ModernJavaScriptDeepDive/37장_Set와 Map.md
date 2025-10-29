@@ -358,3 +358,101 @@ console.log(setB.isSuperset(setA)); // false
 | 요소 개수 확인 | Object.keys(obj).length | map.size |
 
 ### 37.2.1. Map 객체의 생성
+- Map 객체는 MAp 생성자 함수로 생성한다.
+- Map 생성자 함수에 인수를 전달하지 않으면 빈 Map 객체가 생성된다.
+```javascript
+const map = new Map();
+console.log(map); // Map(0) {}
+```
+- Map 생성자 함수는 이터러블을 인수로 전달받아 Map 객체를 생성한다. 이때 인수로 전달되는 이터러블은 키와값의 쌍으로  이루어진 요소로 구성되어야 한다.
+```javascript
+const map1 = new Map([['key1', 'value1'], ['key2', 'value2']]);
+console.log(map1); // Map(2) {"key1" => "value1", "key2" => "value2"}
+
+const map2 = new Map([1, 2]); // TypeError: Iterator value 1 is not an entry object
+```
+- Map 생성자 함수의 인수로 전달한 이터러블에 중복된 키를 갖는 요소가 종재하면 값이 덮어 써진다 따라서 Map 객체에는 중복된 키를 갖는 요소가 존재할 수 없다.
+```javascript
+const map = new Map([['key1', 'value1'], ['key1', 'value2']]);
+console.log(map); // Map(1) {"key1" => "value2"}
+```
+
+### 37.2.2. 요소 개수 확인
+- Map 객체의 요소 개수를 확인할 때는 Map.prototype.size 프로퍼티를 사용한다.
+```javascript
+const { size } = new Map([['key1', 'value1'], ['key2', 'value2']]);
+console.log(size); // 2
+```
+- size 프로퍼티는 setter 함수 없이 getter 함수만 존재하는 접근자 프로퍼티다. 따라서 size 프로퍼티에 숫자를 할당하려 Map 객체의 요소 개수를 변경할 수 없다.
+```javascript
+const map = new Map([['key1', 'value1'], ['key2', 'value2']]);
+
+console.log(Object.getOwnPropertyDescriptor(Map.prototype, 'size'));
+// {set: undefined, enumerable: false, configurable: true, get: ƒ}
+
+map.size = 10; // 무시된다.
+console.log(map.size); // 2
+```
+
+### 37.2.3. 요소 추가
+- Map 객체에 요소를 추가할 때는 Map.prototype.set 메서드를 사용한다.
+```javascript
+const map = new Map();
+console.log(map); // Map(0) {}
+
+map.set('key1', 'value1');
+console.log(map); // Map(1) {"key1" => "value1"}
+```
+- set 메서드는 새로운 요소가 추가된 Map 객체를 반환한다. 따라서 set 메서드를 호출한 후에 set 메서드를 연속적으로 호출할 수 있다.
+```javascript
+const map = new Map();
+
+map
+  .set('key1', 'value1')
+  .set('key2', 'value2');
+
+console.log(map); // Map(2) {"key1" => "value1", "key2" => "value2"}
+```
+- Map 객체에는 중복된 키를 갖는 요소가 존재할 수 없기 때문에 중복된 키를 갖는 요소를 추가하면 값이 덮어써진다. 이때 에러가 발생하지는 않는다.
+```javascript
+const map = new Map();
+
+map
+  .set('key1', 'value1')
+  .set('key1', 'value2');
+
+console.log(map); // Map(1) {"key1" => "value2"}
+```
+- 일치 비교 연산자  ===을 사용하면 NaN과 NaN을 다르닥고 평가한다. 하지만 Map 객체는 NaN과 NaN을 같다고 평가하여 중복 추가를 허용하지 않는다.
+- +0과 =0은 일치 비교 연산자 ===와 마찬가지로 같다고 평가하여 중복 추가를 허용하지 않는다.
+```javascript
+const map = new Map();
+
+console.log(NaN === NaN); // false
+console.log(0 === -0); // true
+
+// NaN과 NaN을 같다고 평가하여 중복 추가를 허용하지 않는다.
+map.set(NaN, 'value1').set(NaN, 'value2');
+console.log(map); // Map(1) { NaN => 'value2' }
+
+// +0과 -0을 같다고 평가하여 중복 추가를 허용하지 않는다.
+map.set(0, 'value1').set(-0, 'value2');
+console.log(map); // Map(2) { NaN => 'value2', 0 => 'value2' }
+```
+- 객체는 문자열 또는 심벌 값만 키로 사용할 수 있다. 하지만 Map 객체는 키 타입에 제한이 없다.
+- 따라서 객체를 포함한 모든 값을 키로 사용할 수 있다. 이는 Map 객체와 일반 객체의 가장 두드러지는 차이점이다.
+```javascript
+const map = new Map();
+
+const lee = { name: 'Lee' };
+const kim = { name: 'Kim' };
+
+// 객체도 키로 사용할 수 있다.
+map
+  .set(lee, 'developer')
+  .set(kim, 'designer');
+
+console.log(map);
+// Map(2) { {name: "Lee"} => "developer", {name: "Kim"} => "designer" }
+```
+- 
