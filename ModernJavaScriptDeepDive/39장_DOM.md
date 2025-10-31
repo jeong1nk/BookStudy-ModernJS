@@ -346,3 +346,85 @@ const $all = document.getElementsByTagName('*');
 - 만약 인수로 전달된 태그 이름을 갖는 요소가 존재하지 않는 경우 getElementsByClassName 메서드는 빈 HTMLCollection 객체를 반환한다.
 
 ### 39.2.4. CSS 선택자를 이용한 요소 노드 취득
+- CSS 선택자는 스타일을 적용하고자 하는 HTML 요소를 특정할 때 사용하는 문법이다.
+```css
+/* 전체 선택자: 모든 요소를 선택 */
+* { ... }
+/* 태그 선택자: 모든 p 태그 요소를 모두 선택 */
+p { ... }
+/* id 선택자: id 값이 'foo'인 요소를 모두 선택 */
+#foo { ... }
+/* class 선택자: class 값이 'foo'인 요소를 모두 선택 */
+.foo { ... }
+/* 어트리뷰트 선택자: input 요소 중에 type 어트리뷰트 값이 'text'인 요소를 모두 선택 */
+input[type=text] { ... }
+/* 후손 선택자: div 요소의 후손 요소 중 p 요소를 모두 선택 */
+div p { ... }
+/* 자식 선택자: div 요소의 자식 요소 중 p 요소를 모두 선택 */
+div > p { ... }
+/* 인접 형제 선택자: p 요소의 형제 요소 중에 p 요소 바로 뒤에 위치하는 ul 요소를 선택 */
+p + ul { ... }
+/* 일반 형제 선택자: p 요소의 형제 요소 중에 p 요소 뒤에 위치하는 ul 요소를 모두 선택 */
+p ~ ul { ... }
+/* 가상 클래스 선택자: hover 상태인 a 요소를 모두 선택 */
+a:hover { ... }
+/* 가상 요소 선택자: p 요소의 콘텐츠의 앞에 위치하는 공간을 선택
+   일반적으로 content 프로퍼티와 함께 사용된다. */
+p::before { ... }
+```
+- Document.prototype/Element.prototype.querySelector 메서드는 인수로 전달한 CSS 선택자를 만족시키는 하나의 요소 노드를 탐색하여 반환한다.
+  - 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 여러 개인 경우 첫 번째 요소 노드만 반환한다.
+  - 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 존재하지 않는 경우 null을 반환한다.
+  - 인수로 전달한 CSS 선택자가 문법에 맞지 않는 경우 DOMException 에러가 발생한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+    <script>
+      // class 어트리뷰트 값이 'banana'인 첫 번째 요소 노드를 탐색하여 반환한다.
+      const $elem = document.querySelector('.banana');
+
+      // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      $elem.style.color = 'red';
+    </script>
+  </body>
+</html>
+```
+- Document.prototype/Element.prototype.querySelectorAll 메서드는 인수로 전달한 CSS 선택자를 만족시키는 모든 요소 노드를 탐색하여 반환한다.
+- querySelectorAll 메서드는 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 NodeList 객체를 반환한다. NodeList 객체는 유사 배열 객체이면서 이터러블이다.
+  - 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 존재하지 않는 경우 빈 NodeList 객체를 반환한다.
+  - 인수로 전달한 CSS 선택자가 문법에 맞지 않는 경우 DOMException 에러가 발생한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+    <script>
+      // ul 요소의 자식 요소인 li 요소를 모두 탐색하여 반환한다.
+      const $elems = document.querySelectorAll('ul > li');
+      // 취득한 요소 노드들은 NodeList 객체에 담겨 반환된다.
+      console.log($elems); // NodeList(3) [li.apple, li.banana, li.orange]
+
+      // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      // NodeList는 forEach 메서드를 제공한다.
+      $elems.forEach(elem => { elem.style.color = 'red'; });
+    </script>
+  </body>
+</html>
+```
+- HTML 문서의 모든 요소 노드를 취득하려면 querySelectorAll 메서드의 인수로 전체 선택자 '*'를 전달한다.
+```javascript
+// 모든 요소 노드를 탐색하여 반환한다.
+const $all = document.querySelectorAll('*');
+// -> NodeList(8) [html, head, body, ul, li#apple, li#banana, li#orange, script]
+```
+- 
