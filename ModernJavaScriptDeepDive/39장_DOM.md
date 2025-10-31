@@ -316,7 +316,7 @@ const $all = document.getElementsByTagName('*');
   </body>
 </html>
 ```
-- getElementsByClassName 메서드는 Documnet.prototype에 정의된 메서드와 Element.prototype에 정의된 메서드가 있다.
+- 마찬가지로 getElementsByClassName 메서드는 Documnet.prototype에 정의된 메서드와 Element.prototype에 정의된 메서드가 있다.
 - Document.prototype.getElementsByClassName 메서드는 DOM의 루트 노드인 문서 노드, 즉 documnet를 통해 호출하며 DOM 전체에서 요소 노드를 탐색하여 반환한다. 하지만 Element.prototype.getElementsByClassName 메서드는 특정 요소 노드를 통해 호출하며, 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환한다.
 ```html
 <!DOCTYPE html>
@@ -427,4 +427,9 @@ p::before { ... }
 const $all = document.querySelectorAll('*');
 // -> NodeList(8) [html, head, body, ul, li#apple, li#banana, li#orange, script]
 ```
-- 
+- 마찬가지로 querySelector, querySelectorAll 메서드는 Documnet.prototype에 정의된 메서드와 Element.prototype에 정의된 메서드가 있다.
+- Documnet.prototype에 정의된 메서드는 DOM의 루트 노드인 문서 노드, 즉 documnet를 통해 호출하며 DOM 전체에서 요소 노드를 탐색하여 반환한다. 하지만 Element.prototype 메서드는 특정 요소 노드를 통해 호출하며, 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환한다.
+- CSS 선택자 문법을 사용하는 querySelector, querySelectorAll 메서드는 앞서 살펴봤던 getElemetsBy*** 메서드 보다 다소 느린 것으로 알려져 있다. 하지만 CSS 선택자 문법을 사용하여 좀 더 구체적인 조건으로 요소 노드를 취득할 수 있고 일관된 방식으로 요소 노드를 취득할 수 있다는 장점이 있다.
+- 따라서 **id 어트리뷰트가 있는 요소 노드를 취득하는 경우에는 getElementId 메서드를 사용하고 그 외의 경우에는 querySelector, querySelectorAll 메서드를 사용하는 것을 권장한다.**
+
+### 39.2.5. 특정 요소 노드를 취득할 수 있는지 확인
