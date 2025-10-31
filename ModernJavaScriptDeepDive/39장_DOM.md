@@ -225,3 +225,124 @@
 ```
 
 ### 39.2.2. 태그 이름을 이용한 요소 노드 취득
+- Document.prototype/Element.prototype.getElementsByTagName 메서드는 인수로 전달한 태그 이름을 갖는 모든 요소 노드들을 탐색하여 반환한다.
+- 메서드 이름에 포함된 Elements가 복수형인 것에서 알 수 있듯이 getElementsByTagName 메서드는 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 HTMLCollection 객체를 반환한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li id="apple">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="orange">Orange</li>
+    </ul>
+    <script>
+      // 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+      // 탐색된 요소 노드들은 HTMLCollection 객체에 담겨 반환된다.
+      // HTMLCollection 객체는 유사 배열 객체이면서 이터러블이다.
+      const $elems = document.getElementsByTagName('li');
+
+      // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      // HTMLCollection 객체를 배열로 변환하여 순회하며 color 프로퍼티 값을 변경한다.
+      [...$elems].forEach(elem => { elem.style.color = 'red'; });
+    </script>
+  </body>
+</html>
+```
+- 함수는 하나의 값만 반환할 수 있으므로 여러 개의 값을 반환하려면 배열이나 객체와 같은 자료 구조에 담아 반환해야 한다.
+- getElementsByTagName 메서드가 반환하는 DOM 컬렉션 객체인 HTMLCollection 객체는 유사 배열 객체이면서 이터러블이다.
+- HTML 문서의 모든 요소 노드를 취득하려면 getElementsByTagName 메서드의 인수로 '*'를 전달한다.
+```javascript
+// 모든 요소 노드를 탐색하여 반환한다.
+const $all = document.getElementsByTagName('*');
+// -> HTMLCollection(8) [html, head, body, ul, li#apple, li#banana, li#orange, script, apple: li#apple, banana: li#banana, orange: li#orange]
+```
+- getElementsByTagName 메서드는 Documnet.prototype에 정의된 메서드와 Element.prototype에 정의된 메서드가 있다.
+- Document.prototype.getElementsByTagName 메서드는 DOM의 루트 노드인 문서 노드, 즉 documnet를 통해 호출하며 DOM 전체에서 요소 노드를 탐색하여 반환한다. 하지만 Element.prototype.getElementsByTagName 메서드는 특정 요소 노드를 통해 호출하며, 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+      <li>Orange</li>
+    </ul>
+    <ul>
+      <li>HTML</li>
+    </ul>
+    <script>
+      // DOM 전체에서 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+      const $lisFromDocument = document.getElementsByTagName('li');
+      console.log($lisFromDocument); // HTMLCollection(4) [li, li, li, li]
+
+      // #fruits 요소의 자손 노드 중에서 태그 이름이 li인 요소 노드를 모두
+      // 탐색하여 반환한다.
+      const $fruits = document.getElementById('fruits');
+      const $lisFromFruits = $fruits.getElementsByTagName('li');
+      console.log($lisFromFruits); // HTMLCollection(3) [li, li, li]
+    </script>
+  </body>
+</html>
+```
+- 만약 인수로 전달된 태그 이름을 갖는 요소가 존재하지 않는 경우 getElementsByTagName 메서드는 빈 HTMLCollection 객체를 반환한다.
+
+### 39.2.3. class를 이용한 요소 노드 취득
+- Document.prototype/Element.prototype.getElementsByClassName 메서드는 인수로 전달한 class 어트리뷰트 값(이하 class 값)을 갖는 모든 요소 노드들을 탐색하여 반환한다.
+- 인수로 전달할 class 값은 공백으로 구분하여 여러 개의 class를 지정할 수 있다.
+- getElementsByClassName 메서드는 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 HTMLCollection 객체를 반환한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li class="fruit apple">Apple</li>
+      <li class="fruit banana">Banana</li>
+      <li class="fruit orange">Orange</li>
+    </ul>
+    <script>
+      // class 값이 'fruit'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
+      const $elems = document.getElementsByClassName('fruit');
+
+      // 취득한 모든 요소의 CSS color 프로퍼티 값을 변경한다.
+      [...$elems].forEach(elem => { elem.style.color = 'red'; });
+
+      // class 값이 'fruit apple'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
+      const $apples = document.getElementsByClassName('fruit apple');
+
+      // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      [...$apples].forEach(elem => { elem.style.color = 'blue'; });
+    </script>
+  </body>
+</html>
+```
+- getElementsByClassName 메서드는 Documnet.prototype에 정의된 메서드와 Element.prototype에 정의된 메서드가 있다.
+- Document.prototype.getElementsByClassName 메서드는 DOM의 루트 노드인 문서 노드, 즉 documnet를 통해 호출하며 DOM 전체에서 요소 노드를 탐색하여 반환한다. 하지만 Element.prototype.getElementsByClassName 메서드는 특정 요소 노드를 통해 호출하며, 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+    <div class="banana">Banana</div>
+    <script>
+      // DOM 전체에서 class 값이 'banana'인 요소 노드를 모두 탐색하여 반환한다.
+      const $bananasFromDocument = document.getElementsByClassName('banana');
+      console.log($bananasFromDocument); // HTMLCollection(2) [li.banana, div.banana]
+
+      // #fruits 요소의 자손 노드 중에서 class 값이 'banana'인 요소 노드를 모두 탐색하여 반환한다.
+      const $fruits = document.getElementById('fruits');
+      const $bananasFromFruits = $fruits.getElementsByClassName('banana');
+
+      console.log($bananasFromFruits); // HTMLCollection [li.banana]
+    </script>
+  </body>
+</html>
+```
+
+- 만약 인수로 전달된 태그 이름을 갖는 요소가 존재하지 않는 경우 getElementsByClassName 메서드는 빈 HTMLCollection 객체를 반환한다.
+
+### 39.2.4. CSS 선택자를 이용한 요소 노드 취득
