@@ -67,3 +67,57 @@
 - 위 4가지 노드 타입을 제외한 노드는 후반에서 다룰 예정
 
 ### 39.1.3. 노드 객체의 상속 구조
+- DOM은 HTML 문서의 계층적 수조와 정보를 표현하며, 이를 제어할 수 있는 API, 즉 프로퍼티와 메서드를 제공하는 트리 자료구조이다.
+- 즉 DOM을 구성하는 노드 객체는 자신의 구조와 정보를 제어할 수 있는 DOM API를 사용할 수 있다. 이를 통해 노드 객체는 자신의 부모, 형제, 자식을 탐색할 수 있으며, 자신의 어트리뷰트와 텍스트를 조작할 수도 있다.
+- DOM을 구성하는 노드 객체는 ECMAScript 사양에 정의된 표준 빌트인 객체가 아니라 **브라우저 환경에서 추가적을 제공하는 호스트 객체다.** 하지만 노드 객체도 자바스크립트 객체이므로 프로토타입에 의한 상속 구조를 갖는다.
+
+<img width="891" height="391" alt="Image" src="https://github.com/user-attachments/assets/386f8028-668a-4ee4-9873-6a910955f62b" />
+
+- 모든 객체는 Object, EventTarget, Node 인터페이스를 상속받는다.
+- 요소노드는 Element 인터페이스를 상속받는다. 또한 요소노드는 추가적으로 HTMLElement와 태그의 종류별로 세분화된 HTMLHtmlElement, HTMLHeadElement 등의인터페이스를 상속 받는다.
+- 예를 들어, input 요소를 파싱하여 객체화한 input 요소 노드 객체는, 프로토타입 체인에 있는 모든 프로토타입의 프로퍼티나 메서드를 상속받아 사용할 수 있다.
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <input type="text">
+  <script>
+    // input 요소 노드 객체를 선택
+    const $input = document.querySelector('input');
+
+    // input 요소 노드 객체의 프로토타입 체인
+    console.log(
+      Object.getPrototypeOf($input) === HTMLInputElement.prototype,
+      Object.getPrototypeOf(HTMLInputElement.prototype) === HTMLElement.prototype,
+      Object.getPrototypeOf(HTMLElement.prototype) === Element.prototype,
+      Object.getPrototypeOf(Element.prototype) === Node.prototype,
+      Object.getPrototypeOf(Node.prototype) === EventTarget.prototype,
+      Object.getPrototypeOf(EventTarget.prototype) === Object.prototype
+    ); // 모두 true
+  </script>
+</body>
+</html>
+```
+- 배열이 객체인 동시에 배열인 것처럼 input 요소 노드 객체도 다음과 같이 다양한 특성을 갖는 객체이며, 이러한 특성을 나타내는 기능들을 상속을 통해 제공받는다.
+
+| input 요소 노드 객체의 특성 | 프로토타입을 제공하는 객체 |
+|------------------------------|-----------------------------|
+| 객체 | Object |
+| 이벤트를 발생시키는 객체 | EventTarget |
+| 트리 자료구조의 노드 객체 | Node |
+| 브라우저가 렌더링 할 수 있는 웹 문서의 요소(HTML, XML, SVG)를 표현하는 객체 | Element |
+| 웹 문서의 요소 중에서 HTML 요소를 표현하는 객체 | HTMLElement |
+| HTML 요소 중에서 input 요소를 표현하는 객체 | HTMLInputElement |
+
+- 노드 객체의 상속 구조는 개발자 도구의 Elements 패널 우측의 Properties 패널에서 확인할 수 있다.
+- 노드 객체에는 노드 객체의 종료, 즉 노드 타입에 상관없이 모든 노드 객체가 공통으로 갖는 기능도 있고, 노드 타입에 따라 고유한 기능도 있다. 또한 모든 노드 객체는 트리 자료구조의 노드로서 공통적으로 트리 탐색기능이나 노드 정보 제공 기능이 필요하다. 이 같은 노드 관련 기능은 Node 인터페이스가 제공한다.
+- HTML 요소가 객체화된 요소 노드 객체는 HTML 요소가 갖는 공통적인 기능잉 있다. 이는 HTMLElement 인터페이스가 제공한다.
+- 하지만 요소 노드 객체는 HTML 요소의 종류에 따라 교유한 기능도 있다. 따라서 필요한 기능을 제공하는 인터페이스가 HTML 요소의 종류에 따라 각각 다르다.
+- 이처럼 노드 객체는 공통된 기능일수록 프로토타입 체인의 상위에, 개별적인 고유 기능일수록 프로토타입 체인의 하위에 프로토타입 체인을 구축하여 노드 객체에 필요한 기능, 즉 프로퍼티와 메서드를 제공하는 상속 구조를 갖는다.
+<br />
+
+- DOM은 HTML 문서의 계층적 구조와 정보를 표현하는 것은 물론 노드 객체의 종류, 즉 노드 타입에 따라 필요한 기능을 프로퍼티와 메서드의 집합인 DOMAPI로 제공한다. 이 DOM API를 통해 HTML의 구조나 내용 또는스타일 등을 동적으로 조작할 수 있다.
+- 여기서 중요한 것은 DOM API, 즉 DOM이 제공하는 프로퍼티와 메서드를 사용해 노드에 접근하고 HTML의 구조나 내용 또는 스타일 등을 동적으로 변경하는 방법을 익히는 것이다.
+- 즉, HTML을 DOM과 연관지어 바라보아야 한다.
+
+# 39.2. 요소 노드 취득
