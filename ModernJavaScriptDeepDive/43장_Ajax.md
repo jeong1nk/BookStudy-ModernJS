@@ -164,7 +164,10 @@ console.log(typeof parsed, parsed);
 ### 43.3.1. XMLHttpRequest 객체 생성
 - XMLHttpRequest 객체는 XMLHttpRequest 생성자 함수를 호출해 생성한다.
 - XMLHttpRequest 객체는 브라우저에서 제공하는 Web API이므로 브라우저 환경에서만 정상적으로 실행된다.
-
+```javascript
+// XMLHttpRequest 객체 생성
+const xhr = new XMLHttpRequest();
+```
   
 ##  43.3.2. XMLHttpRequest 객체의 프로퍼티 메서드
 - XMLHttpRequest 객체는 다양한 프로퍼티와 메서드를 제공한다.
@@ -210,3 +213,93 @@ console.log(typeof parsed, parsed);
 | DONE | 4 | 서버 응답 완료 |
 
 ### 43.3.3. HTTP 요청 전송
+- HTTP 요청을 전송하는 경우 다음 순서를 따른다.
+  1. XMLHttpRequest.prototype.open 메서드로 HTTP 요청을 초기화 한다.
+  2. 필요에 따라 XMLHttpRequest.prototype.setRequestHeader 메서드로 특정 HTTP 요청의 헤더 값을 설정한다.
+  3. XMLHttpRequest.prototype.send 메서드로 HTTP 요청을 전송한다.
+```javascript
+// XMLHttpRequest 객체 생성
+const xhr = new XMLHttpRequest();
+
+// HTTP 요청 초기화
+xhr.open('GET', '/users');
+
+// HTTP 요청 헤더 설정
+// 클라이언트가 서버로 전송할 데이터의 MIME 타입 지정: json
+xhr.setRequestHeader('content-type', 'application/json');
+
+// HTTP 요청 전송
+xhr.send();
+```
+
+#### XMLHttpRequest.prototype.open
+- open 메서드는 서버에 전송할 HTTP 요청을 초기화 한다.
+```
+xhr.open(method, url[, async])
+```
+| 매개변수 | 설명 |
+| ------------- | ------ |
+| method | HTTP 요청 메서드("GET", "POST", "PUT", "DELETE" 등) |
+| url | HTTP 요청을 전송할 URL |
+| async | 비동기 요청 여부, 옵션으로 기본값은 true이며, 비동기 방식으로 동작한다. |
+
+- HTTP 요청 메서드는 클라이언트가 서버에게 요청의 종류와 목적(리소스에 대한 행위)을 알리는 방법이다.
+- 주로 5가지 요청 메서드(GET, POST, PUT, PATCH, DELETE 등)를 사용하여 CRUD를 구현한다.
+
+| HTTP 요청 메서드 | 종류  | 목적 | 페이로드 |
+| ------------- | ------ | ------ | ------ |
+| GET | index/retrieve | 모든/특정 리소스 취득 | X |
+| POST | create | 리소스 생성 | O |
+| PUT | replace | 리소스의 전체 교체 | O |
+| PATCH | modify | 리소스의 일부 수정 | O |
+| DELETE | delete | 모든/특정 리소스 삭제 | X |
+
+#### XMLHttpRequest.prototype.send
+- send 메서드는 open  메서드로 초기화된 HTTP 요청을 서버에 전송한다.
+- 기본적으로 서버로 전송하는 데이터는 SET, POST 요청 메서드에 따라 전송 방식에 차이가 있다.
+  - GET 요청 메서드의 경우 데이터를 URL의  일부분인 쿼리 문자열로 서버에 전송한다.
+  - POST 요정 메서드의 경우 데이터(페이로드)를 요청 몸체에 담아 전송한다.
+- send 메서드에는 요청 몸체에 담아 전송할 데이터(페이로드)를 인수로 전달할 수 있다. 페이로드가 객체인 경우 반드시 JSON.stringify 메서드를 사용해 직렬화 한다음 전달해야 한다.
+```javascript
+xhr.send(JSON.stringify({ id: 1, content: 'HTML', completed: false }));
+```
+- **HTTP 요청 메서드가 GET인 경우 send 메서드에 페이로드로 전달한 인수는 무시되고 요청 몸체는 null로 설정된다,**
+ 
+#### XMLHttpRequest.prototype.setRequestHeader
+- 특정 HTTP 요청의 헤더 값을 설정한다.
+- **setRequestHeader 메서드는 반드시 open 메서드를 호출한 이후에 호출해야 한다.**
+- HTTPP 요청 헤더인 Content-type과 Accepte에 대해 살펴보자.
+<br />
+
+- Content-type은 요청 몸체에 담에 전송할 데이터의 MIME 타입의 정보를 표현한다.
+- 아래는 자주 사용되는 MIME 타입이다.
+| MIME 타입 | 서브타입 |
+| ------------- | ------ |
+| text | text/plain, text/html, text/css, text/javascript |
+| application | application/json, application/x-www-form-urlencode |
+| multipart | multipart/formed-data |
+
+- 아래 예제는 요청 몸체에 담아 서버로 전송할 페이로드의 MIME 타입을 지정하는 예다.
+```javascript
+// XMLHttpRequest 객체 생성
+const xhr = new XMLHttpRequest();
+
+// HTTP 요청 초기화
+xhr.open('POST', '/users');
+
+// HTTP 요청 헤더 설정
+// 클라이언트가 서버로 전송할 데이터의 MIME 타입 지정: json
+xhr.setRequestHeader('content-type', 'application/json');
+
+// HTTP 요청 전송
+xhr.send(JSON.stringify({ id: 1, content: 'HTML', completed: false }));
+```
+- HTTP 클라이언트가 서버에 요청할 때 서버가 응답할 데이터의 MIME 타입을 Accept로 지정할 수 있다.
+- 아래 예제는 서버가 응답할 데이터의 MIME 타입을 지정하는 예다.
+```javascript
+// 서버가 응답할 데이터의 MIME 타입 지정: json
+xhr.setRequestHeader('accept', 'application/json');
+```
+- 만약 Accpet 헤더를 설정하지 않으면 send 메서드가 호출될 때 Accept 헤더가 */*으로 전송된다.
+
+### 43.3.4. HTTP 응답 처리
