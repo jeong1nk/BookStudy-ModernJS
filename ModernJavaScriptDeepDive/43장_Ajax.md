@@ -157,3 +157,56 @@ console.log(typeof parsed, parsed);
 ```
 
 # 43.3. XMLHttpRequest
+- 브라우저는  주소창이나 HTML의 form 캐그 또는 a 캐그를 통해 HTTP 요청 전송 기능을 기본제공한다.
+- 자바스크립트를 사용하여 HTTP 요청을 전송하려면 XMLHttpRequest 객체를 사용한다.
+- Web API인 XMLHttpRequest 객체는 HTTP 요청 전송과 HTTP 응답 수신을 위한 다양한 메서드와 프로퍼티를 제공한다.
+
+### 43.3.1. XMLHttpRequest 객체 생성
+- XMLHttpRequest 객체는 XMLHttpRequest 생성자 함수를 호출해 생성한다.
+- XMLHttpRequest 객체는 브라우저에서 제공하는 Web API이므로 브라우저 환경에서만 정상적으로 실행된다.
+
+  
+##  43.3.2. XMLHttpRequest 객체의 프로퍼티 메서드
+- XMLHttpRequest 객체는 다양한 프로퍼티와 메서드를 제공한다.
+- 대표적인 프로퍼티와 메서드는 다음과 같으며 중요한 프로퍼티와 메서드는 굵게 표시했다.
+#### XMLHttpRequest 객체의 프로토타입 프로퍼티
+| 프로토타입 프로퍼티 | 설명 |
+| ------------------ | ------|
+| **readyState** | HTTP 요청의 현대 상태를 나타내는 정수. 다음과 같은 정적 프로퍼티 값으로 갖는다.<br>- UNSENT: 0<br>- OPENED: 1<br>- HEADERS_RECEIVED: 2<br>- LOADING: 3<br>- DONE: 4 |
+| **status** | HTTP 요청에 대한 응답 상태(HTTP 상태 코드)를 나타내는 정수<br>예) 200 |
+| **statusText** | HTTP 요청에 대한 응답 메세지를 나타내는 문자열<br>예) "OK" |
+| **responseType** | HTTP 응답 타입<br>예)documetn, json,text,blob,arraybuffer |
+| **response** | HTTP 요청에 대한 응답 몸체, responseType에 따라 타입이 다르다 |
+| responseText | 서버가 전송한 HTTP 요청에 대한 응답 문자열 |
+
+#### XMLHttpRequest 객체의 이벤트 핸들러 프로퍼티
+| 이벤트 핸들러 프로퍼티 | 설명 |
+| ------------------ | ------ |
+| **onreadystatechange** | readyState 프로퍼티 값이 변경된 경우 |
+| onloadstart | HTTP 요청에 대한 응답을 받기 시작한 경우 |
+| onprogress | HTTP 요청에 대한 응답을 받는 도중 추기적으로 발생 |
+| onabort | abort 메서드에 의해 HTTP 요청이 중단되 경우 |
+| **onerror** | HTTP 요청에 에러가 발생한 경우 |
+| **onload** | HTTP 요청이 성공적으로 완료한 경우 |
+| ontimeout | HTTP 요청 시간이 초과한 경우 |
+| onloadend | HTTP 요청이 완료한 경우, HTTP 요청이 성공 또는 실패하면 발생 |
+
+#### XMLHttpRequest 객체의 메서드
+| 메서드 | 설명 |
+| ------------------ | ------ |
+| **open** | HTTP 요청 초기화 |
+| **send** | HTTP 요청 전송 |
+| **abort** | 이미 전송된 HTTP 요청 중단 |
+| **setRequestHeader** | 특정 HTTP 요청 헤더의 값을 설정 |
+| setResponseHeader | 특정 HTTP 요청 헤더의 값을 문자열로 반환 |
+
+#### XMLHttpRequest 객체의 정적 프로퍼티
+| 정적 프로퍼티 | 값 | 설명 |
+| ------------- | --- | ------ |
+| UNSENT | 0 | open 메서드 호출 이전 |
+| OPENED | 1 | open 메서드 호출 이후 |
+| HEADERS_RECEIVED | 2 | send 메서드 호출 이후 |
+| LOADING | 3 | 서버 응답 중(응답 데이터 미완성 상태) |
+| DONE | 4 | 서버 응답 완료 |
+
+### 43.3.3. HTTP 요청 전송
