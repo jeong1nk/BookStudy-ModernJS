@@ -70,3 +70,63 @@ new genFunc(); // TypeError: genFunc is not a constructor
 ```
 
 # 46.3. 제너레이터 객체
+- **제너레이터 함수를 호출하면 일반 함수처럼 함수 코드 블록을 실행하는 것이 아니라 제너레이터 객체를 생성해 반환한다.**
+- **제너레이터 함수가 반환한 제너레이터 객체는 이터러블이면서 동시에 이터레이터이다.**
+- 다시 말해, 제너레이터 객체는 Symbol.iterator 메서드를 상속받는 이터러블이면서 value, done 프로퍼티를 갖는 이터레이터 리절트 객체를 반환하는 next 메서드를 소유하는 이터레이터다.
+- 제너레이터 객체는 next 메서드를  가지는 이터레이터 이므로 symbol.iterator 메서드를 호출해서 별도로 이터레이터를 생성할 필요가 없다.
+```javascript
+// 제너레이터 함수
+function* genFunc() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+// 제너레이터 함수를 호출하면 제너레이터 객체를 반환한다.
+const generator = genFunc();
+
+// 제너레이터 객체는 이터러블이면서 동시에 이터레이터다.
+// 이터러블은 Symbol.iterator 메서드를 직접 구현하거나 프로토타입 체인을 통해 상속받은 객체다.
+console.log(Symbol.iterator in generator); // true
+// 이터레이터는 next 메서드를 갖는다.
+console.log('next' in generator); // true
+```
+- 제너레이터 객체는 next 메서드를 갖는 이터레이터지만 이터레이터에는 없는 return,throw 메서드를 갖는다.
+- 제너레이터 객체의 세 개의 메서드를 호출하면 다음과 같이 동작한다.
+  - next 메서드를 호출하면 제너레이터 함수의 tield 표현식까지 코드 블록을 실행하고  yield된 값을 value 프로퍼티 값으로, false를 done 프로퍼티 값으로 갖는 이터레이터 리절트 객체를 반환한다.
+  - return 메서드를 호출하면 인수로 전달 받은 값을 value 프로퍼티 값으로, true를 done 프로퍼티 값으로 갖는 이터레이터 리절트 객체를 반환한다.
+```javascript
+function* genFunc() {
+  try {
+    yield 1;
+    yield 2;
+    yield 3;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+const generator = genFunc();
+
+console.log(generator.next()); // {value: 1, done: false}
+console.log(generator.return('End!')); // {value: "End!", done: true}
+```
+  - throw 메서드를 호출하면 인수로 전달받은 에러를 발생시키고 undefined를 value 프로퍼티 값으로, true를 done 프로퍼티 값으로 갖는 이터레이터 리절트 객체를 반환한다.
+```javascript
+function* genFunc() {
+  try {
+    yield 1;
+    yield 2;
+    yield 3;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+const generator = genFunc();
+
+console.log(generator.next()); // {value: 1, done: false}
+console.log(generator.throw('Error!')); // {value: undefined, done: true}
+```
+
+# 46.4. 제너레이터의 일시 중지와 재개
