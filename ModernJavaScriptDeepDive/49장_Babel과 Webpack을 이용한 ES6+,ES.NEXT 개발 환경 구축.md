@@ -273,4 +273,160 @@ $ npm install --save-dev webpack babel-loader
   }
 }
 ```
-- 
+
+### 49.2.3. webpack.config.js 설정 파일 작성
+- webpack.config.js 파일은 Webpack이 실행될 때 참조하는 설정파일이다. 프로젝트 루트 폴더에 webpack.config.js 파일을 생성하고 다음과 같이 작성한다.
+```javascript
+const path = require('path');
+
+module.exports = {
+  // entry file
+  // https://webpack.js.org/configuration/entry-context/#entry
+  entry: './src/js/main.js',
+  // 번들링된 js 파일의 이름(filename)과 저장될 경로(path)를 지정
+  // https://webpack.js.org/configuration/output/#outputpath
+  // https://webpack.js.org/configuration/output/#outputfilename
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'js/bundle.js'
+  },
+  // https://webpack.js.org/configuration/module
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        include: [
+          path.resolve(__dirname, 'src/js')
+        ],
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-proposal-class-properties']
+          }
+        }
+      }
+    ]
+  },
+  devtool: 'source-map',
+  // https://webpack.js.org/configuration/mode
+  mode: 'development'
+};
+```
+- 이제 Webpack을 실행하여 트랜스파일링 및 번들링을 실행해보자. 트랜스파일링은 Babel이 수행하고 번들링은 Webpack이 수행한다. 만약 이전에 실행시킨 빌드 명령이 실행 중인 상태라면 중지시키고 다시 다음 명령을 실행한다.
+```
+$ npm run bulid
+
+> esnext-project@1.0.0  build /User/폴더주소
+> webpack -w
+```
+- Webpack을 실행한 결과, dist/js 폴더에 bundle.js가 생성되었다 이 파일은 main.js, lib.js 모듈이 하나로 번들링된 결과물이다. index.html을 다음과 같이 수정하고 브라우저에서 실행해보자.
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <script src="./dist/js/bundle.js"></script>
+</body>
+</html>
+```
+- main.js, lib.js 모듈이 하나로 번들링된 bundel.js가 브라우저에서 문제없이 실행된 것을 확인할 수 있다.
+
+### 49.2.4. babel-polyfill 설치
+- Babel을 사용해 ES6+/ES.NEXT 사양의 소스코드를 ES5 사양의 소스코드로 트랜스파일링해도 브라우저가 지원하지 않는 코드가 남아있을 수 있다.
+- src/js/main.js를 다음과 같이 수정해 ES6에서 추가된 Promise, Object.assign, Array.from 등이 어떻게 트랜스파일링되는지 확인해보자.
+```javascript
+// src/js/main.js
+import { pi, power, Foo } from './lib';
+
+console.log(pi);
+console.log(power(pi, pi));
+
+const f = new Foo();
+console.log(f.foo());
+console.log(f.bar());
+
+// polyfill이 필요한 코드
+console.log(new Promise((resolve, reject) => {
+  setTimeout(() => resolve(1), 100);
+}));
+
+// polyfill이 필요한 코드
+console.log(Object.assign({}, { x: 1 }, { y: 2 }));
+
+// polyfill이 필요한 코드
+console.log(Array.from([1, 2, 3], v => v + v));
+```
+- 다시 트랜스파일링과 번들링을 실행한 다음, dist/js/bundel.js를 확인해보자.
+```javascript
+...
+// 190 line
+console.log(new Promise(function (resolve, reject) {
+  setTimeout(function () {
+    return resolve(1);
+  }, 100);
+})); // polyfill이 필요한 코드
+
+console.log(Object.assign({}, {
+  x: 1
+}, {
+  y: 2
+})); // polyfill이 필요한 코드
+
+console.log(Array.from([1, 2, 3], function (v) {
+  return v + v;
+}));
+...
+```
+- 이처럼 Promise, Object.assign, Array.from 등고 ㅏ같이 ES5사양으로 대체할 수 없는 기능은 트랜스파일링되지 않는다. 따라서 IE 같은 구형 브라우저에서도 Promise, Object.assign, Array.from 등과 같은 객체나 메서드를 사용하기 위해서는 @babel/polyfill을 설치해야 한다.
+```
+$ npm install @babel/polyfill
+```
+- 설치가 완료된 이후 packge.json 파일은 다음과 같다.
+```json
+{
+  "name": "esnext-project",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "webpack -w"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.3",
+    "@babel/core": "^7.10.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/preset-env": "^7.10.3",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.10.1"
+  }
+}
+```
+- @babel/polyfill은 개발 환경에서만 사용하는 것이 아니라 실제 운영 환경에서도 사용해야 한다. 따라서 개발용 의존성으로 설치하는 --save-dev 옵션을 지정하지 않는다.
+- ES6의 inport를 사용하는 경우에는 진입점의 선두에서 먼저 폴리필을 로드하도록 한다.
+```javascript
+// src/js/main.js
+import "@babel/polyfill";
+import { pi, power, Foo } from './lib';
+...
+```
+- Webpack을 사용하는 경우에는 위 방법 대신 WEbpack.config.js 파일의 entry 배열에 폴리필을 추가한다.
+```javascript
+const path = require('path');
+
+module.exports = {
+  // entry file
+  // https://webpack.js.org/configuration/entry-context/#entry
+  entry: ['@babel/polyfill', './src/js/main.js'],
+...
+```
+- 위와 같이 webpack.config.js 파일을 수정해 폴리필을 반영해보자. 빌드 명령이 실행 중인 상태라면 중지시키고 다시 다음과 같이 명령어를 입력해 Webpack을 실행한다.
+```
+$ npm run bulid
+
+> esnext-project@1.0.0  build /User/폴더주소
+> webpack -w
+```
+- dist/js/bundle.js를 확인해보면 다음과 같이 폴리필이 추가된 것을 확인할 수 있다.
