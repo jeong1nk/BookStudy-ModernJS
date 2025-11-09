@@ -19,11 +19,61 @@
   return Math.pow(n, n);
 });
 ```
-- 이처럼 Babel은 ES6+/ES.NEXT로 구현된 최신 사양의 소스코드 를 IE 같은 구형  브라우저에서도 동작하는 ES5 사양의 소스코드로  변환(트랜스파일링)할 수 있다. Babel을 사용하기 위한 개발 환경을 구축해보자.
+- 이처럼 Babel은 ES6+/ES.NEXT로 구현된 최신 사양의 소스코드 를 IE 같은 구형 브라우저에서도 동작하는 ES5 사양의 소스코드로  변환(트랜스파일링)할 수 있다. Babel을 사용하기 위한 개발 환경을 구축해보자.
 
 ### 49.1.1 Babel 설치
+- npm을 이용해 babel을 설치해보자. 터미널에서 다음과 같이 입력해서 Babel을설치한다.
+```
+# 프로젝트 폴더 생성
+$ mkdir esnext-project && cd esnext-project
+# package.json 생성
+$ npm init  -y
+# babel-core, babel-cli 설치
+$ npm install --save-dev @babel/core @babel/cli
+```
+-  설치가 완료된 이후 package.json 파일은 다음과 같다. 불필요한 설정은 삭제했다.
+```json
+{
+  "name": "esnext-project",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@babel/cli": "^7.10.3",
+    "@babel/core": "^7.10.3"
+  }
+}
+```
+-  참고로 Babel, Webpack, 플러그인의 버전은 빈번하게 업그레이드 된다. `npm install`은 언제나 최신 버전의 패키지를 생성하므로 위 버전과는 다른 최신 버전의 패키지가 설치될 수도 있다. 만약 위 버전 그대로 설치하고 싶다면 아래와 같이  패키지 이름 뒤에 @과 설치하고 싶은 버전을 지정한다.
+```
+# 버전 지정 설치
+$ npm install --save-dev @babel/core@7.10.3 @babel/cli@7.10.3
+```
 
-### 49.1.2. Babel 프리셋 설치롸 babel.config.json 설정 파일 설정
+### 49.1.2. Babel 프리셋 설치와 babel.config.json 설정 파일 설정
+- Babel을 사용하려면 @babel/preset-env를 설치해야 한다. @babel/preset-env는 함께 사용되어야하는 Babel 플러그인을 모아  둔 것으로 Babel 프리셋이라고 부른다.
+-  @babel/preset-env은 필요한 플러그인 들을 프로젝트 지원환경에 맞춰 동적으로 결정해준다. 프로젝트 지원환경은 Browserslist 형식으로  .browserslistrc 파일에 상세히 설정할 수 있다. 만약 프로젝트 지원 환경 설정 작업을  생략하면 기본값으로 설정된다.
+-  일단은 기본 설정으로 진행하자. 기본 설정은 모든 ES6+/ES.NEXT 사양의 소스코드를 변환한다.
+```
+# @babel/preset-env 설치
+$ npm install --save-dev @babel/preset-env
+```
+-  설치가 완료된 이후 package.json 파일은 다음과 같다.
+```json
+{
+  "name": "esnext-project",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@babel/cli": "^7.10.3",
+    "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3"
+  }
+}
+```
+-  설치가 완료되면 프로젝트 루트 폴더에 babel.config.json 설정 파일을 생성하고 다음과 같이 작성한다. 지금 설치한 @babel/preset-env르 사용하겠다는 의미이다.
+```json
+{
+  "presets": ["@babel/preset-env"]
+}
+```
 
 ### 49.1.3. 트랜스파일링
 
