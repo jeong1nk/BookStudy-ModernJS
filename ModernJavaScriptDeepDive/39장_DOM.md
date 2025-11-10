@@ -433,3 +433,167 @@ const $all = document.querySelectorAll('*');
 - 따라서 **id 어트리뷰트가 있는 요소 노드를 취득하는 경우에는 getElementId 메서드를 사용하고 그 외의 경우에는 querySelector, querySelectorAll 메서드를 사용하는 것을 권장한다.**
 
 ### 39.2.5. 특정 요소 노드를 취득할 수 있는지 확인
+- Element.prototype.matches 메서드는 인수로 전달한 CSS 선택자를 통해 요소 노드를 취득할 수 있는지 확인한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+  </body>
+  <script>
+    const $apple = document.querySelector('.apple');
+
+    // $apple 노드는 '#fruits > li.apple'로 취득할 수 있다.
+    console.log($apple.matches('#fruits > li.apple'));  // true
+
+    // $apple 노드는 '#fruits > li.banana'로 취득할 수 없다.
+    console.log($apple.matches('#fruits > li.banana')); // false
+  </script>
+</html>
+```
+- Element.prototype.matches 메서드는 이벤트 위임을 사용할 때 유용하다.(40.7)
+
+### 39.2.6. HTMLCollection과 NodeList
+- DOM 컬렉션 객체인 HTMLCollection과 NodeList는 DOM API가 여러 개의 결과값을 반환하기 위한 DOM 컬렉션 객체다 HTMLCollection과 NodeList는 모두 유사  배열 객체이면서 이터러블이다. 따라서 for...of 문으로 순회할 수 있으며 스프레드 문법을 사용해 간단히 배열로 변환할 수 있다.
+- HTMLCollection과 NodeList의 중요한 특징은 노드 객페의 상태 변화를 실시간을 ㅗ반영하는 살아있는 객체라는 것이다. HTMLCollection은 언제나 live 객체로  동작한다. 단 NodeList는 대부분의 경우  노드 객체의 상태 변화를 실시간을 ㅗ반영하지 않고 과거의 정적 상태를 유지하는 non-live 객체로 동작하ㅣ만 경우에 따라 live 객체로 동작할 때도 있다.
+
+#### HTMLCollection
+- getElementsByTagNAme, getElemetnsByClassName 메서드가 반환하는 HTMLCollection 객체는 노드 객체의 상태 변화를 실시간으로 반영하는 살아 있는 DOM 컬렉션 객체다. 따라서 HTMLCollection 객체를 살아있는 객체라고 부르기도 한다.
+```html
+<!DOCTYPE html>
+<head>
+  <style>
+    .red { color: red; }
+    .blue { color: blue; }
+  </style>
+</head>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="red">Apple</li>
+      <li class="red">Banana</li>
+      <li class="red">Orange</li>
+    </ul>
+    <script>
+      // class 값이 'red'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
+      const $elems = document.getElementsByClassName('red');
+      // 이 시점에 HTMLCollection 객체에는 3개의 요소 노드가 담겨 있다.
+      console.log($elems); // HTMLCollection(3) [li.red, li.red, li.red]
+
+      // HTMLCollection 객체의 모든 요소의 class 값을 'blue'로 변경한다.
+      for (let i = 0; i < $elems.length; i++) {
+        $elems[i].className = 'blue';
+      }
+
+      // HTMLCollection 객체의 요소가 3개에서 1개로 변경되었다.
+      console.log($elems); // HTMLCollection(1) [li.red]
+    </script>
+  </body>
+</html>
+```
+- 위 예제는 getElementsByClassName 메서드로 class 값이  'red'인 요소 노드를  모두 취득하고 취득된 모든 요소 노드를 담고 있는 HTMLCollection 객체를 for 문으로 순회하며 className 프로퍼티를 사용해 모든 요소의 class 값을 'red'에서 'blue'로 변경한다.
+- 따라서 위 예제가 에러 없이 실행되면  모든 li 요소의 class 값이  'blue'로 변경되어 모든 li 요소는 CSS에 의해 파란색을 렌더링 될 것이다. 하지만 위 예제를 실행해보면 예상대로  동작하지 않는다. 두 번째 li 요소만 class 값이 변경되지 않기 때문이다.
+- 위 예제가  예상대로 동작하지 않은 이유를 알아보자. $elems.length는 이므로 for 문의 코드블록은 3번 반복된다.
+  - 1. 첫번째 반복(i === 0)
+   : $elems[0]은 첫번째 li 요소다. 이 요소는 className 프로퍼티에  의해 class 값이 'red'에서 'blue'로 변경된다. 이때 첫 번째 li 요소는 class 값이 'red'에서 'blue'로 변경되었으므로 getElementsByClassName 메서드의 인자로 전달한 'red'와 더는 일치하지 않기 때문에 $elems에서 실시간으로 제거된다. 이처럼 HTMLCollection 객체는 실시간을 ㅗ논드 객체의 상태 변경을 반영하는 살아있는 DOM 컬렉션 객체다.
+  - 2. 두번째 반복(i === 1)
+   : 첫번째 반복에서 첫번째 li 요소는 $elems에서 제거되었다. 따라서 $elems[1]은 세번째 li요소다. 이 세번째 li 요소의 class 값도 'blue'로 변경되고 마찬가지로 HTMLCollection 객체인 $elems에서 실시간으로 제외된다.
+  - 3. 세번째 반복(i === 2)
+    : 첫번째ㅡ 두번째 반복에서 첫번 ㅐ, 세번째 li 요소가 $elems에서  제거되었다. 따라서 $elems에서는 두번째 li 요소 노드만 남았다. 이때 $elems.lenth는 1이므로 for 문의 조건식 i < $elems.length가 false로 평가되어 반복이 종료된다. 따라서 $elems에 남아 있는 두 번째 li 요소의 class 값은 변경되지 않는다.
+- 이처럼 HTMLCollection 객체는 실시간으로 노드 객체의 상태 변경을 반영해 요소를 제거할 수 있기 때문에 HTMLCollection 객체를 for 문으로 순회하면서 노드 객체의 상태를 변경해야 할 때 주의해야 한다. 이 문제는 for 문을 역방향으로 순회하는 방법으로 회피할 수 있다.
+```javascript
+// for 문을 역방향으로 순회
+for (let i = $elems.length - 1; i >= 0; i--) {
+  $elems[i].className = 'blue';
+}
+```
+- 또는 while 문을 사용해 HTMLCollection 객체에 노드 객체가 남아 있지 않을 때까지  무한  반복하는 방법으로 회피할 수도 있다.
+```javascript
+// while 문으로 HTMLCollection에 요소가 남아 있지 않을 때까지 무한 반복
+let i = 0;
+while ($elems.length > i) {
+  $elems[i].className = 'blue';
+}
+```
+- 더 간단한 해결책은 부작용을 발생시키는 원인인 HTMLCollection 객체를 사용하지 않는 것이다. 유사 배열객체이면서 이터러블인 HTMLCollection 객체를 배열로 변환하면 부작용을 발생시키는 HTMLCollection 객체를 사용할 필요가 없고 유용한 배열의 고차 함수(forEach, map, filter, reduce 등)를 사용할 수 있다.
+```javascript
+// 유사 배열 객체이면서 이터러블인 HTMLCollection을 배열로 변환하여 순회
+[...$elems].forEach(elem => elem.className = 'blue');
+```
+
+#### NodeList
+- HTMLCollection 객체의 부작용을 해결하기 위해 getElementsByTagNAme, getElemetnsByClassName 메서드 대신 querySelectorAll 메서드르 사용하는 방법도 있다. querySelectorAll 메서드는 DOM 컬렉션 객체인 NodeList 객체를 반환한다. 이때 NodeList 객체는 실시간을 ㅗ노드 객체의 상태 변경을 반영하지 않는 객체다.
+```javascript
+// querySelectorAll은 DOM 컬렉션 객체인 NodeList를 반환한다.
+const $elems = document.querySelectorAll('.red');
+
+// NodeList 객체는 NodeList.prototype.forEach 메서드를 상속받아 사용할 수 있다.
+$elems.forEach(elem => elem.className = 'blue');
+```
+- querySelectorAll이 반환하는 NodeList 객체는 NodeList.prototype.forEach 메서드를 상속받아 사용할 수 있다. NodeList.prototype.forEach 메서드는 Array.prototye.forEach 메서드와 사용방법이 동일하다. NodeList.prototype은 forEach 외에서 item, entries, keys,  walues 메서드를 제공한다.
+- NodeList 객체는 대부분의 경우 노드 객체릐 상태 변경을 실시간을 ㅗ반영하지 않고 과거의 정적 상태를 유지하는 non-live 객체로 동작한다. 하지만 childNodes 프로퍼티가  반환하는 NodeList 객체는 HTMLCollection 객체와 같이 실시간으로 노드 객체의 상태 변경을 반영하는 live 객체로 동작하므로 주의가 필요하다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // childNodes 프로퍼티는 NodeList 객체(live)를 반환한다.
+    const { childNodes } = $fruits;
+    console.log(childNodes instanceof NodeList); // true
+
+    // $fruits 요소의 자식 노드는 공백 텍스트 노드(39.3.1절 "공백 텍스트 노드" 참고)를 포함해 모두 5개다.
+    console.log(childNodes); // NodeList(5) [text, li, text, li, text]
+
+    for (let i = 0; i < childNodes.length; i++) {
+      // removeChild 메서드는 $fruits 요소의 자식 노드를 DOM에서 삭제한다.
+      // (39.6.9절 "노드 삭제" 참고)
+      // removeChild 메서드가 호출될 때마다 NodeList 객체인 childNodes가 실시간으로 변경된다.
+      // 따라서 첫 번째, 세 번째 다섯 번째 요소만 삭제된다.
+      $fruits.removeChild(childNodes[i]);
+    }
+
+    // 예상과 다르게 $fruits 요소의 모든 자식 노드가 삭제되지 않는다.
+    console.log(childNodes); // NodeList(2) [li, li]
+  </script>
+</html>
+```
+- 이처럼 HTMLCollection이나 NodeList 객체는 예상과 다르게 동작할 때가 있어 다루기 까다롭고 실수하기 쉽다. 따라서 노드  객체의 상태 변경과 상관없이 안전하게 DOM 컬렉션을 사용하려면 HTMLCollection이나 NodeList 객체를 배열로 변환하여 사용하는 것을 권장한다. HTMLCollection과 NodeList 객체가 메서드를 제공하기는 하지만 배열릐 고차 함수만큼 다양한 기능을 제공하지는 않는다. HTMLCollection이나 NodeList 객체를 배열로 변환하면 배열의 유용한 고차 함수(forEach, map, flter, reduce 등)를 사용할 수 있다는 장점도 있다.
+- HTMLCollection과 NodeList 객체는 모두 유사 배열 객체이면서 이터러블이다. 다라서 스프레드 문법이다 Array.from 메서드를 사용해 간단히 배열로 변환할 수 있다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // childNodes 프로퍼티는 NodeList 객체(live)를 반환한다.
+    const { childNodes } = $fruits;
+
+    // 스프레드 문법을 사용하여 NodeList 객체를 배열로 변환한다.
+    [...childNodes].forEach(childNode => {
+      $fruits.removeChild(childNode);
+    });
+
+    // $fruits 요소의 모든 자식 노드가 모두 삭제되었다.
+    console.log(childNodes); // NodeList []
+  </script>
+</html>
+```
+
+# 39.3. 노드 탐색
