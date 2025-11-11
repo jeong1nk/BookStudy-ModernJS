@@ -731,3 +731,97 @@ $elems.forEach(elem => elem.className = 'blue');
 ```
 
 ### 39.3.4. 요소 노드의 텍스트 노드 탐색
+- 요소 노드의  텍스트 노드는 요소 노드의 자식 노드다. 따라서 요소 노드의 텍스트 노드는 firstChild 프로ㅓ티로 접근할 수 있다. firstChild 프로퍼티는 첫 번째 자식 노드를 반환한다. firstChild 프로퍼티가 반환한 노드는텍스트 노드이거나 요소 노드다.
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <div id="foo">Hello</div>
+  <script>
+    // 요소 노드의 텍스트 노드는 firstChild 프로퍼티로 접근할 수 있다.
+    console.log(document.getElementById('foo').firstChild); // #text
+  </script>
+</body>
+</html>
+```
+
+### 39.3.5. 부모 노드 탐색
+- 부모 노드를 탐색하여면 Node.prototype.parentNode 프로퍼티를 사용한다. 텍스트  노드는 DOM 트리의 최종단 노드인 리프 노드이므로 부모 노드가 텍스트 노드인 경우는 없다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+  </body>
+  <script>
+    // 노드 탐색의 기점이 되는 .banana 요소 노드를 취득한다.
+    const $banana = document.querySelector('.banana');
+
+    // .banana 요소 노드의 부모 노드를 탐색한다.
+    console.log($banana.parentNode); // ul#fruits
+  </script>
+</html>
+```
+
+### 39.3.6. 형제 노드 탐색
+- 부모 노드가 같은 형제 노드를 탐색하려면 다음과 같은 노드 탐색 프로퍼티를 사용한다. 단, 어트리뷰트 노드는 요소  노드와  연결되어 있지만 부모 노드가 같은 형제  노드ㅏ 아니기 때문에 반환되지 않는다. 즉, 아래 프로퍼티는 텍스트 노드 또는 요소 노드만 반환한다.
+
+| 프로퍼티 | 설명 |
+| ------- | ------|
+| Node.prototype.previousSibling | 부모 노드가 같은 형제  노드 중에서 자신의 이전 형제 노드를 탐색해 반환한다. previousSibling 프로퍼티가 반환하는 형제 노드는 요소노드 뿐만 아니라 텍스트 노드일 수도 있다. |
+| Node.prototype.nextSibling | 부모 노드가 같은 형제 노드 중에서 자신의 다음 형제 노드를 탐색해 반환한다. nextSibling 프로퍼티가 반환하는 형제 노드는 요소노드 뿐만 아니라 텍스트 노드일 수도 있다. |
+| Element.prototype.previousElementSibling | 부모 노드가 같은 형제  노드 중에서 자신의 이전 형제 노드를 탐색해 반환한다. previousElementSibling 프로퍼티는 요소 노드만 반환한다. |
+| Element.prototype.nextElementSibling | 부모 노드가 같은 형제 노드 중에서 자신의 다음 형제 노드를 탐색해 반환한다. nextElementSibling 프로퍼티는 요소 노드만 반환한다. |
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+  </body>
+  <script>
+    // 노드 탐색의 기점이 되는 #fruits 요소 노드를 취득한다.
+    const $fruits = document.getElementById('fruits');
+
+    // #fruits 요소의 첫 번째 자식 노드를 탐색한다.
+    // firstChild 프로퍼티는 요소 노드뿐만 아니라 텍스트 노드를 반환할 수도 있다.
+    const { firstChild } = $fruits;
+    console.log(firstChild); // #text
+
+    // #fruits 요소의 첫 번째 자식 노드(텍스트 노드)의 다음 형제 노드를 탐색한다.
+    // nextSibling 프로퍼티는 요소 노드뿐만 아니라 텍스트 노드를 반환할 수도 있다.
+    const { nextSibling } = firstChild;
+    console.log(nextSibling); // li.apple
+
+    // li.apple 요소의 이전 형제 노드를 탐색한다.
+    // previousSibling 프로퍼티는 요소 노드뿐만 아니라 텍스트 노드를 반환할 수도 있다.
+    const { previousSibling } = nextSibling;
+    console.log(previousSibling); // #text
+
+    // #fruits 요소의 첫 번째 자식 요소 노드를 탐색한다.
+    // firstElementChild 프로퍼티는 요소 노드만 반환한다.
+    const { firstElementChild } = $fruits;
+    console.log(firstElementChild); // li.apple
+
+    // #fruits 요소의 첫 번째 자식 요소 노드(li.apple)의 다음 형제 노드를 탐색한다.
+    // nextElementSibling 프로퍼티는 요소 노드만 반환한다.
+    const { nextElementSibling } = firstElementChild;
+    console.log(nextElementSibling); // li.banana
+
+    // li.banana 요소의 이전 형제 요소 노드를 탐색한다.
+    // previousElementSibling 프로퍼티는 요소 노드만 반환한다.
+    const { previousElementSibling } = nextElementSibling;
+    console.log(previousElementSibling); // li.apple
+  </script>
+</html>
+```
+
+# 39.4. 노드 정보 취득
+
