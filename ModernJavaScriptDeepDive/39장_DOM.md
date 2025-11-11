@@ -855,3 +855,116 @@ $elems.forEach(elem => elem.className = 'blue');
 
 # 39.5. 요소 노드의 텍스트 조작
 ### 39.5.1. nodeValue
+- 지금까지 살펴본  노드 탐색, 노드 정보 프로퍼티는 모두 읽기 전용 접근자 프로퍼티다. 지금부터 살펴볼 node.prototype.nodeValue 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티다. 따라서 nodeValue 프로퍼티는 참조와 할당 모두 가능하다.
+- 노드 객체의 nodeValue 프로퍼티를 참조하면 노드 객체의 값을 반환한다.  노드 객체의 값이란 텍스트 노드의 텍스트다. 따라서텍스트 노드가 아닌 노드, 즉 문서 노드나 요소 노드의 nodeValue 프로퍼티를 참조하면 null을 반환한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 문서 노드의 nodeValue 프로퍼티를 참조한다.
+    console.log(document.nodeValue); // null
+
+    // 요소 노드의 nodeValue 프로퍼티를 참조한다.
+    const $foo = document.getElementById('foo');
+    console.log($foo.nodeValue); // null
+
+    // 텍스트 노드의 nodeValue 프로퍼티를 참조한다.
+    const $textNode = $foo.firstChild;
+    console.log($textNode.nodeValue); // Hello
+  </script>
+</html>
+```
+- 이처럼 텍스트 노드의 nodeValue 프로퍼티를 참조할 때만 텍스트  노드의 값, 즉 텍스트를 반환한다. 텍스트 노드가  아닌 노드 객체의 nodeValue 프로퍼티를 참조하면 null을 반환하므로 의미가 업다.
+- 텍스트 노드의 nodeValue 프로퍼티에 값을 할당하면 텍스트 노드의 값, 즉 텍스트를 변경할 수 있다. 따라서 요소 노드의 텍스트를 변경하려면 다음과 같은 순서의 처리가 필요하다.
+  1. 텍스트를 변경할 요소 노드를 취득한 다음, 취득한 요소 노드의 텍스트 노드를 탐색한다. 텍스트 노드는 요소 노드의 자식 노드이므로 firstchild 프로퍼티를 사용해 탐색한다.
+  2. 탐색한  텍스트 노드의 nodeValue 프로퍼티를 사용해 텍스트 노드의 값을 변경한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 1. #foo 요소 노드의 자식 노드인 텍스트 노드를 취득한다.
+    const $textNode = document.getElementById('foo').firstChild;
+
+    // 2. nodeValue 프로퍼티를 사용하여 텍스트 노드의 값을 변경한다.
+    $textNode.nodeValue = 'World';
+
+    console.log($textNode.nodeValue); // World
+  </script>
+</html>
+```
+
+### 39.5.2. textContent
+- Node.prototype.textContent 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서 요소 노드의  텍스트와 모든 자손 노드의 텍스트를 모두 취득하거나 변경한다.
+- 요소 노드의 textContent 프로퍼티를 참조하면 요소 노드의 콘텐츠 영역(시작 태그와 종료 태그 사이) 내의  텍스트를 모두 반환한다. 다시 말해, 요소 노드의 childNodes 프로퍼티가 반환한 모든 노드들의 텍스트 노드의 값, 즉 텍스트를 모두 반환한다. 이때 HTML 마크업은 무시된다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소 노드의 텍스트를 모두 취득한다. 이때 HTML 마크업은 무시된다.
+    console.log(document.getElementById('foo').textContent); // Hello world!
+  </script>
+</html>
+```
+- 앞서 살펴본 nodeValue 프로퍼티를 참조해도 텍스트를 취득할 수 있었다. 단, 텍스트  노드가 아닌 노드의 nodeValue 프로퍼티는 null을반환하므로 의미가 없고 텍스트 노드의  nodeValue 프로퍼티를 참조할 때만 텍스트 노드의 값, 즉 텍스트를 반환한다. 다만 nodeValue 프로퍼티를 사용하면 textContent 프로퍼티를 사용할 때와비교해서 코드가 더 복잡하다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소 노드는 텍스트 노드가 아니다.
+    console.log(document.getElementById('foo').nodeValue); // null
+    // #foo 요소 노드의 자식 노드인 텍스트 노드의 값을 취득한다.
+    console.log(document.getElementById('foo').firstChild.nodeValue); // Hello
+    // span 요소 노드의 자식 노드인 텍스트 노드의 값을 취득한다.
+    console.log(document.getElementById('foo').lastChild.firstChild.nodeValue); // world!
+  </script>
+</html>
+```
+- 만약  요소 노드의 콘텐츠 영역에 자식 요소 노드가 없고 텍스트만 존재한다면 firstChild.nodeValue와 textContent 프로퍼티는 같은 결과를 반환한다. 이 경우 textContent 프로ㅓ티를 사용하는 편이 코드가  더 간단한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <!-- 요소 노드의 콘텐츠 영역에 다른 요소 노드가 없고 텍스트만 존재 -->
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    const $foo = document.getElementById('foo');
+
+    // 요소 노드의 콘텐츠 영역에 자식 요소 노드가 없고 텍스트만 존재한다면
+    // firstChild.nodeValue와 textContent는 같은 결과를 반환한다.
+    console.log($foo.textContent === $foo.firstChild.nodeValue); // true
+  </script>
+</html>
+```
+- 요소 노드의 textContent 프로퍼티에 문자열을 할당하면  요소 노드의 모든  자식 노드가 제거되고 할당한 문자열이 텍스트로 추가된다. 이때 할당한 문자열에 HTML 마크업이 포함되어 있더라도  문자열 그대로 인식되어 텍스트로 취급된다. 즉, HTML 마크업이 파싱되지 않는다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열이 텍스트로 추가된다.
+    // 이때 HTML 마크업이 파싱되지 않는다.
+    document.getElementById('foo').textContent = 'Hi <span>there!</span>';
+  </script>
+</html>
+```
+- 참고로 textContent 프로퍼티와 유사한동작을 하는 innerText 프로퍼티가 있다. innerText 프로퍼티는 다음과 같은 이유로 사용하지 않는 것이 좋다.
+  - innerText 프로퍼티는 CSS에 순종적이다. 예를 들어, innerText 프로퍼티는 CSS에 의해 비표시(visibility: hidden;)로 지정된 요소 노드의 텍스트를 반환하지 않는다.
+  - innerText 프로퍼티는 CSS를 고려해야 하므로 textContent 프로퍼티 보다 느리다.
+ 
+# 39.6. DOM 조작
+
