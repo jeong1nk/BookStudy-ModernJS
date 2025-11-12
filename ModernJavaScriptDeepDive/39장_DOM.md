@@ -1090,5 +1090,136 @@ $fruits.innerHTML = $fruits.innerHTML + '<li class="banana">Banana</li>';
 - li.apple 요소와 li.orange 요소 사이에 새로운 요소를 삽입하고 싶은 경우  innerHTML 프로퍼티를 사용하면 삽입 위치를 지정할 수 없다. 이처럼 innerHTML 프로퍼티는 복잡하지 않은 요소르 새롭게 추가할 때 유용하지 만 기존 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입해야 할 때는 사용하지 않는 것이 좋다.
 
 ### 39.6.2. insertAdjacentHTML 메서드
+-  Element.prototype.insertAdjacentHTML(position, DOMString) 메서드는 기존 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입한다.
+-  insertAdjacentHTML 메서드는 두 번째 인수로 전달한 HTML 마크업 문자열(DOMSTring)을 파싱하고 그 결과로 생성된 노드를 첫 번째 인수로 전달한 우치(position)에 삽입해 DOM에 반영한다. 첫번째 인수로 전달할 수 있는 문자열은 'beforebegin', 'afterbegin', 'beforeend', 'afterend'의 4가지다.
+  ```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <!-- beforebegin -->
+    <div id="foo">
+      <!-- afterbegin -->
+      text
+      <!-- beforeend -->
+    </div>
+    <!-- afterend -->
+  </body>
+  <script>
+    const $foo = document.getElementById('foo');
 
--  
+    $foo.insertAdjacentHTML('beforebegin', '<p>beforebegin</p>');
+    $foo.insertAdjacentHTML('afterbegin', '<p>afterbegin</p>');
+    $foo.insertAdjacentHTML('beforeend', '<p>beforeend</p>');
+    $foo.insertAdjacentHTML('afterend', '<p>afterend</p>');
+  </script>
+</html>
+```
+-  insertAdjacentHTML 메서드는  기존 요소에는 영향을 주지  않고 새롭게 삽입될 요소만을 파싱해  자ㅣㄱ 요소로 추가하므로 기존의 자식 노드를 모두 제거하고 다시 처음부터 새롭게 자식 노드를 생성해 자식 요소로 추가하는 innerHTML 프로퍼티보다 효율적이고 빠르다.
+-  단, innerHTML 프로퍼티와 마찬가지로 insertAdjacentHTML 메서드는 HTML 마크업 문자열을 파싱하므로 크로스 사이트 스크립팅 공격에 취약하다는 점은 동일하다.
+
+### 39.6.3. 노드 생성과 추가
+- 지금까지 살펴본 innerHTML 프로퍼티와 insertAdjacentHTML 메서드는 HTML 마크업 문자열을 파싱해 노드르 생성하고 DOM에 반영한다. DOM은 노드를 직접 생성/삽입/삭제/치환하는  메서드도 제공한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 1. 요소 노드 생성
+    const $li = document.createElement('li');
+
+    // 2. 텍스트 노드 생성
+    const textNode = document.createTextNode('Banana');
+
+    // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+    $li.appendChild(textNode);
+
+    // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+    $fruits.appendChild($li);
+  </script>
+</html>
+```
+- 위 예제는 새로운 요소 노드를 생성하고 텍스트 노드를 생성해 요소 노드의 자식 노드로  추가한 다음, 요소 노드를 DOM에 추가한다. 이 과정에 대해 살펴보자.
+
+#### 1. 요소 노드 생성
+- Document.prototype.createElement(tagName) 메서드는 요소 노드를 생성해 반환한다. createElement 메서드의 매개변수 tagName에는 태그 이름을 나타내는 문자열을 인수로 전달한다.
+```javascript
+// 1. 요소 노드 생성
+const $li = document.createElement('li');
+```
+- 위 그림처럼 createElement 메서드로 생성한 요소 노드는 기존 DOM에 추가되지 않고 홀로 존재하는 상태다. 즉, createElement 메서드는 요소 노드를 생성할 DOM에 추가하지는 않는다. 따라서 이후에 생성된 요소 노드를 DOM에 추가하는 처리가 별도로 필요하다.
+- 그리고 createElement 메서드로 생성한 요소 노드는 아무런 자식 노드를  가지고 있지 않다. 따라서 요소 노드의 자식 노드인 텍스트 노드도 없는 상태다.
+```javascript
+// 1. 요소 노드 생성
+const $li = document.createElement('li');
+// 생성된 요소 노드는 아무런 자식 노드가 없다.
+console.log($li.childNodes); // NodeList []
+```
+
+#### 2. 텍스트 노드 생성
+- Document.prototype.createTextNode(text) 메서드는 텍스트 노드를 생성해 반환한다. createTextNode 메서드의 매개변수 text에는 텍스트 노드의 값으로 사용할 문자열을 인수로 전달한다.
+```javascript
+// 2. 텍스트 노드 생성
+const textNode = document.createTextNode('Banana');
+```
+- 텍스트 노드는 요소 노드의 자식 노드다. 하지만 createTextNode 멧서드로 생성한 텍스트 노드는 요소 노드의 자식 노드로 추가되지 않고 홀로 존재하는 상태다. 즉, createTextNode 메서드와 마찬가지로 createTextNode 메서드는 텍스트 노드를 생성할 뿐 요소 노드에 추가하지는 않는다. 따라서 이후에 생성된  텍스트 노드를 요소 노드에 추가하는 처리가 별도로 필요하다.
+
+#### 3. 텍스트 노드를 요소 노드의 자식 노드로 추가
+- Document.prototype.appendChild(childNode) 메서드는 매개변수 childNode에게 인수로 전달한 노드를 appendChild 메서드를 호출한 노드의 마지막 자식 노드를 추가한다.
+- appendChild 메서드의 인수로 createTextNode 메서드로 생성한 텍스트 노드를 전달하면 appendChild 메서드를 호출한 노드의 마지막 자식 노드로 텍스트 노드가 추가된다.
+```javascript
+// 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+$li.appendChild(textNode);
+```
+- appendChild 메서드를 통해 요소 노드와텍스트 노드는 부자 관계로 연결되었지만 아직 기존  DOM에 추가되지는않은 상태다.
+- 위 예제처럼 요소 노드에 자식 노드가  하나도 없는 경우에는 텍스트 노드를 생성해 요소 노드의 자식 노드로 텍스트 노드를  추가하는 것보다 textContent 프로퍼티를 사용하는 편이 더욱 간편하다.
+```javascript
+// 텍스트 노드를 생성하여 요소 노드의 자식 노드로 추가
+$li.appendChild(document.createTextNode('Banana'));
+
+// $li 요소 노드에 자식 노드가 하나도 없는 위 코드와 동일하게 동작한다.
+$li.textContent = 'Banana';
+```
+- 단, 요소 노드에 자식  노드가 있는 경우 요소 노드의 textContent 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열이  텍스트로 추가되므로 주의해야한다.
+
+#### 4. 요소 노드를 DOM에 추가
+- Node.prototype.appendChild 메서드를 사용해 텍스트 노드와 부자 관계로 연결한 욧 노드를 #fruits 요소 노드의  마지막 자식 요소로 추가한다.
+```javascript
+// 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+$fruits.appendChild($li);
+```
+- 이 과정에서 비로소 새롭게 생성한 요소 노드가 DOM에 추가된다. 기존의 DOM에 요소 노드를 추가하는 처리는 이 과정 뿐이다. 위 예제는 단 하나의 요소 노드를 생성해 DOM에 한번 추가하므로 DOM은 한 번 변경된다. 이때 리플로우와 리페인트가 실행된다.
+
+### 39.6.4. 복수의 노드 생성과 추가
+- 이번에는 여러 개의 요소 노드를 생성해 DOM에 추가해보자.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits"></ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    ['Apple', 'Banana', 'Orange'].forEach(text => {
+      // 1. 요소 노드 생성
+      const $li = document.createElement('li');
+
+      // 2. 텍스트 노드 생성
+      const textNode = document.createTextNode(text);
+
+      // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      $fruits.appendChild($li);
+    });
+  </script>
+</html>
+```
+- 
