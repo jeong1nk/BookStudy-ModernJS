@@ -1222,4 +1222,161 @@ $fruits.appendChild($li);
   </script>
 </html>
 ```
+- 위 예제는 3개의 요소 노드를 생성해 DOM에 3번 추가하므로 DOM이 3번 변경된다. 이때 리플로우와  리페인트가 3번 실행된다. DOM을 변경하는 것은 높은 비용이 드는 처리이므로 가급적  횟수를 줄이는편이 성능에 유리하다. 따라서 위 예제와  같이 기존 DOM에 요소 노드를 반복해 추가하는 것은 비효율적이다.
+- 이처럼 DOM을 여러 번 변경하는 문제를 회치하기 위해 커테이너 요소를 사용해보자. 컨테이너 요소를 미리 생성한 다음, DOM에 추가해야 할 3개의  요소 노드를 컨테이너 요소에 자식 노드를 추가하고, 컨테이너 요소를 #fruits 요소에 자식으로  추가한다면 DOM은 한 번만 변경된다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits"></ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 컨테이너 요소 노드 생성
+    const $container = document.createElement('div');
+
+    ['Apple', 'Banana', 'Orange'].forEach(text => {
+      // 1. 요소 노드 생성
+      const $li = document.createElement('li');
+
+      // 2. 텍스트 노드 생성
+      const textNode = document.createTextNode(text);
+
+      // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 컨테이너 요소의 마지막 자식 노드로 추가
+      $container.appendChild($li);
+    });
+
+    // 5. 컨테이너 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+    $fruits.appendChild($container);
+  </script>
+</html>
+```
+- 위 예제는 DOM을 한 번만 변경하느로 성능에 유리하기는 하지만 다음고 ㅏ같이  불필요한 컨테이너 요소(div)가 DOM에 추가되는  부작용이 있다. 이는 바람직하지 않다.
+```html
+<ul id="fruits">
+  <div>
+    <li>apple</li>
+    <li>banana</li>
+    <li>orange</li>
+  </div>
+</ul>
+```
+- 이러한 문제는 DocumentFragment 노드를 통해 해결할 수 있다. DocumentFragment 노드는 문서, 요소, 어트리뷰트, 텍스트 노드와 같은 노드 객체의 일종으로, 부모 노드가 없어서 기존 DOM과는 별도로 존재한다는 특징이 있다. DocumentFragment 노드는 위 예제의 컨테이너 요소와 같이  자식 노드들의 부모 노드로서 별도의 서브 DOM을 구성해 기존 DOM에 추가하기 위한 용도로 사용한다.
+- DocumentFragment 노드는 기존 DOM과는  별도로 존재하므로 DocumentFragment 노드에 자식 노드를 추가해도 기존 DOM에는 어떠한 변경도 발생하지 않는다. 또한 DocumentFragment 노드를 DOM에 추가하면 자신은 제거되고 자신의 자식 노드만 DOM에  추가된다.
+- Document.prototype.createDocumnetFragment 메서드는 비어있는 DocumentFragment 노드를 생성해 반환한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits"></ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // DocumentFragment 노드 생성
+    const $fragment = document.createDocumentFragment();
+
+    ['Apple', 'Banana', 'Orange'].forEach(text => {
+      // 1. 요소 노드 생성
+      const $li = document.createElement('li');
+
+      // 2. 텍스트 노드 생성
+      const textNode = document.createTextNode(text);
+
+      // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 DocumentFragment 노드의 마지막 자식 노드로 추가
+      $fragment.appendChild($li);
+    });
+
+    // 5. DocumentFragment 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+    $fruits.appendChild($fragment);
+  </script>
+</html>
+```
+- 먼저 DocumentFragment 노드를 생성하고 DOM에  추가할 요소 노드를 생성해 DocumentFragment 노드에 자식 노드로  추가한 다음, DocumentFragment 노드를 기존 DOM에 추가한다.
+- 이때 실제로 DOM 변경이 발생하는 것은 한 번뿐이며 리플로우와 리페인트도 한 번만 실행된다. 따라서 여러  개의 요소  노드를 DM에 추가하는 경우 DocumentFragment 노드를 사용하는 것이 더 효율적이다.
+
+### 39.6.5. 노드 삽입
+#### 마지막 노드로 추가
+- Node.prototype.appendChild 메서드는 인수로 전달받은 노드를 자신을  호출한 노드의 마지막 자식 노드로 DOM에 추가한다. 이때 노드를  추가할 위치를 지정할 수 없고 언제나 마지막 자식 노드로 추가한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    // 요소 노드 생성
+    const $li = document.createElement('li');
+
+    // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+    $li.appendChild(document.createTextNode('Orange'));
+
+    // $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+    document.getElementById('fruits').appendChild($li);
+  </script>
+</html>
+```
+
+#### 저장한 위치에 노드 삽입
+- Node.prototype.insertBefore(newNode, childNode) 메서드는 첫 번째  인수로 전달받은 노드를 두번째 인수로 전달받은 노드 앞에 삽입한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 요소 노드 생성
+    const $li = document.createElement('li');
+
+    // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+    $li.appendChild(document.createTextNode('Orange'));
+
+    // $li 요소 노드를 #fruits 요소 노드의 마지막 자식 요소 앞에 삽입
+    $fruits.insertBefore($li, $fruits.lastElementChild);
+    // Apple - Orange - Banana
+  </script>
+</html>
+```
+- 두번째 인수로 전달받은 노드는 반드시 insertBefore 메서드를 호출한 노드의 자식 노드이어야 한다. 그렇지 않으면 DOMException 에러가 발생한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div>test</div>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 요소 노드 생성
+    const $li = document.createElement('li');
+
+    // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+    $li.appendChild(document.createTextNode('Orange'));
+
+    // 두 번째 인수로 전달받은 노드는 반드시 #fruits 요소 노드의 자식 노드이어야 한다.
+    $fruits.insertBefore($li, document.querySelector('div'));
+    // DOMException
+  </script>
+</html>
+```
 - 
