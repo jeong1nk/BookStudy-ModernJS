@@ -1379,4 +1379,131 @@ $fruits.appendChild($li);
   </script>
 </html>
 ```
-- 
+- 두 번째 인수로 전달받은 노드가 null이면 첫 번째 인수로 전달받은 노드를 insertBefore 메서드를 호출한 노드의 마지막 자식 노드로 추가된다. 즉, appendChild 메서드처럼 동작한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 요소 노드 생성
+    const $li = document.createElement('li');
+
+    // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+    $li.appendChild(document.createTextNode('Orange'));
+
+    // 두 번째 인수로 전달받은 노드가 null이면 $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+    $fruits.insertBefore($li, null);
+  </script>
+</html>
+```
+
+### 39.6.6. 노드 이동
+- DOM에 이미 존재하는 노드를 appendChild  또는 insertBefore 메서드를 사용해 DOM에 다시 추가하면 현재 위치에서 노드르 제거하고  새로운 위치에 노드를 추가한다. 즉, 노드가 이동한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+      <li>Orange</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 이미 존재하는 요소 노드를 취득
+    const [$apple, $banana, ] = $fruits.children;
+
+    // 이미 존재하는 $apple 요소 노드를 #fruits 요소 노드의 마지막 노드로 이동
+    $fruits.appendChild($apple); // Banana - Orange - Apple
+
+    // 이미 존재하는 $banana 요소 노드를 #fruits 요소의 마지막 자식 노드 앞으로 이동
+    $fruits.insertBefore($banana, $fruits.lastElementChild);
+    // Orange - Banana - Apple
+  </script>
+</html>
+```
+
+#### 39.6.7. 노드 복사
+- Node.prototype.cloneNode([deep: true | false]) 메서드는 노드의 사본을 생성해 반환한다. 매개 변수 deep에 true를 인수로 전달하면 노드를 깊은 복사(deep copy)해 모든 자손 노드가  포함된 사본을 생성하고, false를 인수로 전달하거나 생략하면  노드를 얕은 복사(shallow copy)해 노드 자신만의 사본을 생성한다. 얕은 복사로 생성된 요소 노드는 자손 노드를 복하자 인하므로 텍스트 노드도 없다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+    const $apple = $fruits.firstElementChild;
+
+    // $apple 요소를 얕은 복사하여 사본을 생성. 텍스트 노드가 없는 사본이 생성된다.
+    const $shallowClone = $apple.cloneNode();
+    // 사본 요소 노드에 텍스트 추가
+    $shallowClone.textContent = 'Banana';
+    // 사본 요소 노드를 #fruits 요소 노드의 마지막 노드로 추가
+    $fruits.appendChild($shallowClone);
+
+    // #fruits 요소를 깊은 복사하여 모든 자손 노드가 포함된 사본을 생성
+    const $deepClone = $fruits.cloneNode(true);
+    // 사본 요소 노드를 #fruits 요소 노드의 마지막 노드로 추가
+    $fruits.appendChild($deepClone);
+  </script>
+</html>
+```
+
+### 39.6.8. 노드 교체
+- Node.prototype.replaceChild(newChild, oldChild) 메서드는 자신을 호출한  노드의 자식 노드를 다른 노드로  교체한다. 첫 번째 매개변수 newChild에는 교체할 새로운  노드를 인수도 전달하고, 두 번재  매개벼수 oldChild에는 이미 존재하는 교체될  노드를 인수로 전달한다. oldChild 매개변수에 인수로 전달한 노드는 replaceChild 메서드를 호출한 노드의 자식 노드이어야 한다.
+- 즉, replaceChild 메서드는  자신을 호출한 노드의 자식 노드인 oldChild  노드를 newChild 노들 ㅗ교체한다. 이때 oldChild  노드는 DOM에서 제거된다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 기존 노드와 교체할 요소 노드를 생성
+    const $newChild = document.createElement('li');
+    $newChild.textContent = 'Banana';
+
+    // #fruits 요소 노드의 첫 번째 자식 요소 노드를 $newChild 요소 노드로 교체
+    $fruits.replaceChild($newChild, $fruits.firstElementChild);
+  </script>
+</html>
+```
+
+### 39.6.9. 노드 삭제
+- Node.prototype.removeChild(child) 메서드는 child 매개변수에 인수로 전달한 노드를 DOM에서 삭제한다. 인수로 전달한 노드는 removeChild 메서드를 호출한 노드의 자식 노드이어야 한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // #fruits 요소 노드의 마지막 요소를 DOM에서 삭제
+    $fruits.removeChild($fruits.lastElementChild);
+  </script>
+</html>
+```
+
+# 39.7. 어트리뷰트
+### 39.7.1. 어트리뷰트 노드와  sttributes 프로퍼티
