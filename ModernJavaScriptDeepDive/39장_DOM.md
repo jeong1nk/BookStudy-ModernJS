@@ -967,4 +967,128 @@ $elems.forEach(elem => elem.className = 'blue');
   - innerText 프로퍼티는 CSS를 고려해야 하므로 textContent 프로퍼티 보다 느리다.
  
 # 39.6. DOM 조작
+- 🏷️DOM 조작: 새로운 노드를 생성해 DOM에 추가하거나 기존 노드를 삭제 또는 교체하는 것
+- DOM 조작에 의해 DOM에 새로운 노드가 추가되거나 삭제되면 리플로우와 리페인트가 발생하는 원인이 되므오 성능에 영향을 준다. 따라서 복잡한 콘텐츠를 다루는 DOM 조작은 성능  최적화를 위해 주의해서 다루어야 한다.
 
+### 39.6.1. innerHTML
+- Element.prototype.innerHTML 프로퍼티는 setter과 getter 모두 존재하는 접근자 프로퍼티로서 요소 노드의 HTML 마크업을 취득하거나 변경한다. 요소  노드의 innerHTML 프로퍼티를 참조하면 요소 노드의 콘텐츠 영역(시작 태그와 종료 태그 사이) 내에 포함된 모든 HTML 마크업을 문자열로 반환한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소의 콘텐츠 영역 내의 HTML 마크업을 문자열로 취득한다.
+    console.log(document.getElementById('foo').innerHTML);
+    // "Hello <span>world!</span>"
+  </script>
+</html>
+```
+- 앞서 살펴본 textContent 프로퍼티를 참조하면HTML 마크업을 무시하고  텍스트만 반환하지만 innerHTML 프로퍼티는 HTML 마크업이 포함된 문자열을 그대로 반환한다.
+- 요소  노드의 innerHTML 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열에 포함되어 있는 HTML 마크업이 파싱되어 요소 노드의  자식 노드로 DOM에 반영된다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // HTML 마크업이 파싱되어 요소 노드의 자식 노드로 DOM에 반영된다.
+    document.getElementById('foo').innerHTML = 'Hi <span>there!</span>';
+  </script>
+</html>
+```
+-  이처럼 innerHTML 프로퍼티를 사용하면 HTML 마크업 문자열로 간단히 DOM 조작이 가능하다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 노드 추가
+    $fruits.innerHTML += '<li class="banana">Banana</li>';
+
+    // 노드 교체
+    $fruits.innerHTML = '<li class="orange">Orange</li>';
+
+    // 노드 삭제
+    $fruits.innerHTML = '';
+  </script>
+</html>
+```
+- 요소 노드의 innerHTML 프로퍼티에 할당한 HTML 마크업 문자열은 렌더링 엔진에 의해 파싱되어 요소 노드의 자식으로 DOM에 반영된다. 이때 사용자로부터 입력받은 데이터를 그대로 innerHTML 프로퍼티에  할당하는 것은 크로스 사이트 스크립팅 공격에 취약하므로 위험하다. HTML 마크업 내에  자바스크립트 악성 코드가  포함되어 있다면 파싱 과정에서 그대로 실행될 가능성이 있기 때문이다.
+- innerHTML 프로퍼티로 스크립트 태그르 삽입해  자바스크립트가 실행되도록 하는 예제를 살펴보다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // innerHTML 프로퍼티로 스크립트 태그를 삽입하여 자바스크립트가 실행되도록 한다.
+    // HTML5는 innerHTML 프로퍼티로 삽입된 script 요소 내의 자바스크립트 코드를 실행하지 않는다.
+    document.getElementById('foo').innerHTML
+      = '<script>alert(document.cookie)</script>';
+  </script>
+</html>
+```
+- HTML5는 innerHTML 프로퍼티로 삽입된 script 요소 내의 자바스크립트 코드를 실행하지 않는다. 따라서 HTML5를 지원하는 브라우저에서 위 예제는 동작하지 않는다. 하지만 script 요소 없이도 크로스 사이트 스크립팅 공격은 가능하다. 다음의 간단한  크로스 사이트 스크립팅 공격은 모던 브라우저에서도 동작한다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 에러 이벤트를 강제로 발생시켜서 자바스크립트 코드가 실행되도록 한다.
+    document.getElementById('foo').innerHTML
+      = `<img src="x" onerror="alert(document.cookie)">`;
+  </script>
+</html>
+```
+- 이처럼 innerHTML 프로퍼티를 사용한 DOM 조작은 구현이 간단하고 직관적이라는 장점이 있지만 크로스 사이트 스크립팅 공격에 취약한 단점도 있다.
+- innerHTML 프로퍼티의 또 다른 단점은 요소 노드의 innHTML 프로퍼티에 HTML 마크업 문자열을 할당하는 경우  요소 노드의 모든 자식 노드를 제거하고 할당한 HTML 마크업 문자열을 파싱해 DOM을 변경한다는 것이다.
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 노드 추가
+    $fruits.innerHTML += '<li class="banana">Banana</li>';
+  </script>
+</html>
+```
+- 위 예제는 #fruits 요소에 자식 요소 li.banana를 추가한다. 이때 #fruits 요소의 자식요소 li.apple은 아무런 변경이 없으므로 다시 생성할 필요가 없다. 다만 새롭게 추가할 li.banana 요소 노드만 생성해 #fruits 요소의 자식 요소로 추가하면 된다. 위 예제를 얼핏 보면 그렇게 동작할 것처럼 보이지만 사실은 #fruits 요소의 모든 자식 노드(li.apple)를 제거하고 새롭게 요소 노드 li.apple과 li.banana를 생성해 #fruits 요소의 자식요소로 추가한다.
+```javascript
+$fruits.innerHTML += '<li class="banana">Banana</li>';
+```
+- 위 코드는 다음 코드의 축약 표현이다.
+```javascript
+$fruits.innerHTML = $fruits.innerHTML + '<li class="banana">Banana</li>';
+// '<li class="apple">Apple</li>' + '<li class="banana">Banana</li>'
+```
+- 이처럼 innerHTML 프로퍼티에 HTML 마크업 문자열을 할당하면 유지되어도 좋은 기존의 자식 노드까지  모두 제거하고 다시 처음부터 새롭게 자식 노드를 생성해 DOM에 반영한다. 이는 효율적이지 않다.
+- innerHTML 프로퍼티의 단점은 이뿐만이 아니다. innerHTML 프로퍼티는 새로운 요소를 삽입할 때 삽입될 위치를 지정할 수 없다는 단점도있다.
+```html
+<ul id="fruits">
+  <li class="apple">Apple</li>
+  <li class="orange">Orange</li>
+</ul>
+```
+- li.apple 요소와 li.orange 요소 사이에 새로운 요소를 삽입하고 싶은 경우  innerHTML 프로퍼티를 사용하면 삽입 위치를 지정할 수 없다. 이처럼 innerHTML 프로퍼티는 복잡하지 않은 요소르 새롭게 추가할 때 유용하지 만 기존 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입해야 할 때는 사용하지 않는 것이 좋다.
+
+### 39.6.2. insertAdjacentHTML 메서드
+
+-  
