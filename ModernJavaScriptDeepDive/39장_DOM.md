@@ -1717,3 +1717,99 @@ document.getElementById('user').getAttribute('value'); // ungmo2
 - 이처러 ㅁ사용자 입력에 의한 상태 변화와 관계있는 DOM 프로퍼티만 최신 상태 값을 관리한다. 그 외의 사용자 입력에 의한 상태 변화와 관계없는 어트리뷰트와 DOM 프로퍼티는 항상 동일한 값으로 연동한다.
 
 #### HTML 어트리뷰트와 DOM 프로퍼티의 대응 관계
+- 대부분의 HTML 어트리뷰트는 HTML 어트리뷰트 이름과 동일한 DOM 프로퍼티와 1:1로 대응한다. 단,  다음과 같이 HTML 어트리뷰트와 DOM 프로퍼티가  언제나 1:1로 대응하는 것은 아니며, HTML 어트리뷰트 이름과  DOM 프로퍼티 키가 반드시 일치하는 것도 아니다.
+  - id 어트리뷰트와 id 프로퍼티는 1:1 대응하며, 동일한 값으로 연동한다.
+  - input 요소의 value 어트리뷰트는 value 프로퍼티와  1:1 대응한다. 하지만 value 어트리뷰트는 초기 상태를, value 프로퍼티는 최신 상태를 갖는다.
+  - class 어트리뷰트는 className, classList 프로퍼티와 대응한다.
+  - for 어트리뷰트는 htmlFor  프로퍼티와 1:1 대응한다.
+  - td 요소의 colspan 어트리뷰트는 대응하는 프로퍼티가 존재하지 않는다.
+  - textContent 프로퍼티는 대응하는 어트리뷰트가 존재하지 않는다.
+  - 어트리뷰트 이름은 대소문자를 구별하지 않지만 대응하는  프로퍼티 키는 카멜 케이스를 따른다.(예. maxLangth)
+
+#### DOM 프로퍼티 값의 타입
+- getAttribute 메서드로  취득한 어트리뷰트 값은 언제나 문자열이다. 하지만 DOM 프로퍼티로 취득한 욋니 상태  값은 문자열이 아닐 수도 있다. 예르 들어, checkbox 요소의 checked 어트리뷰트 값은 문자열 이지만 checked 프로퍼티 값은 불리언 타입이다.
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <input type="checkbox" checked>
+  <script>
+    const $checkbox = document.querySelector('input[type=checkbox]');
+
+    // getAttribute 메서드로 취득한 어트리뷰트 값은 언제나 문자열이다.
+    console.log($checkbox.getAttribute('checked')); // ''
+
+    // DOM 프로퍼티로 취득한 최신 상태 값은 문자열이 아닐 수도 있다.
+    console.log($checkbox.checked); // true
+  </script>
+</body>
+</html>
+```
+
+### 39.7.4. data 어트리뷰트와 dataset 프로퍼티
+- data 어트리뷰트와 dataset  프로퍼티를 사용하면 HTML 요소에 정의한 사용자 정의 어트리뷰트와  자바스크립트 간에 데이터를 교환할 수 있다. data 어트리뷰트는 data-user-id, data-role과 같이 data- 접두가 다음와 임의의 이름을 붙여 사용한다.
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <ul class="users">
+    <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+    <li id="2" data-user-id="9524" data-role="subscriber">Kim</li>
+  </ul>
+</body>
+</html>
+```
+- data 어트리뷰트의 값은 HTMLElement.dataset 프로퍼티로 취득할 수 있다. dataset 프로퍼티는 HTML 요소의 모든 data 어트리뷰트의 정보를 제공하는 DOMStringMap 객체를 반환한다. DOMStringMap 객체는  data 어트리뷰트의 data- 접두사 다음에 붙인 임의의 이름을 카멜 케이스로 변환한 프로퍼티를 가지고 있다. 이 프로퍼티로 data 어트리뷰트의 값을 취득하거나 변경할 수 있다.
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <ul class="users">
+    <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+    <li id="2" data-user-id="9524" data-role="subscriber">Kim</li>
+  </ul>
+  <script>
+    const users = [...document.querySelector('.users').children];
+
+    // user-id가 '7621'인 요소 노드를 취득한다.
+    const user = users.find(user => user.dataset.userId === '7621');
+    // user-id가 '7621'인 요소 노드에서 data-role의 값을 취득한다.
+    console.log(user.dataset.role); // "admin"
+
+    // user-id가 '7621'인 요소 노드의 data-role 값을 변경한다.
+    user.dataset.role = 'subscriber';
+    // dataset 프로퍼티는 DOMStringMap 객체를 반환한다.
+    console.log(user.dataset); // DOMStringMap {userId: "7621", role: "subscriber"}
+  </script>
+</body>
+</html>
+```
+- data 어트립트의 data- 접두사 다음에 존재하지 않는 이름을 키로 사용해 dataset 프로퍼티에 값을 할당하면 HTML 요소에 data 어트리뷰트가 추가된다. 이때 dataset 프로퍼티에 추가한 카멜 케이스(fooBar)의 프로퍼티 ㅋ는  data 어트리뷰트의 data- 접두사 다음에 케밥케이스(data-foo-bar)로 자동 변경되어 추가된다.
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <ul class="users">
+    <li id="1" data-user-id="7621">Lee</li>
+    <li id="2" data-user-id="9524">Kim</li>
+  </ul>
+  <script>
+    const users = [...document.querySelector('.users').children];
+
+    // user-id가 '7621'인 요소 노드를 취득한다.
+    const user = users.find(user => user.dataset.userId === '7621');
+
+    // user-id가 '7621'인 요소 노드에 새로운 data 어트리뷰트를 추가한다.
+    user.dataset.role = 'admin';
+    console.log(user.dataset);
+    /*
+    DOMStringMap {userId: "7621", role: "admin"}
+    -> <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+    */
+  </script>
+</body>
+</html>
+```
+
+# 39.8. 스타일
+### 39.8.1. 인라인 스타일 조작
