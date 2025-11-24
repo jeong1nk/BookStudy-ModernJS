@@ -31,9 +31,7 @@ const circle = new Circle(5);
 console.log(circle.getDiameter()); // 10
 ```
 - 생성자 함수 내부의 this는 생성자 함수가 생성할 인스턴스를 가리킨다.
-<br />
-
-- this는 전역이든 함수 내부이든 코드 어디에서든 참조 가능하다.
+- **this는 전역이든 함수 내부이든 코드 어디에서든 참조 가능하다.**
 ```javascript
 // this는 어디서든지 참조 가능하다.
 // 전역에서 this는 전역 객체 window를 가리킨다.
@@ -64,7 +62,7 @@ function Person(name) {
 
 const me = new Person('Lee');
 ```
-- this는 객체의 프로퍼티나 메서드를 참조하기위한 자기 참조 변수이므로, 일반으로 객체의 메서드 내부 또는 생성자 함수 내부에서만 의미가 있다.
+- this는 객체의 프로퍼티나 메서드를 참조하기 위한 자기 참조 변수이므로, 일반으로 객체의 메서드 내부 또는 생성자 함수 내부에서만 의미가 있다.
 
 # 22.2. 함수 호출 방식과 this 바인딩
 - **🏷️this 바인딩: this에 바인딩될 값은 함수 호출 방식, 즉 함수가 어떻게 호출되었는지에 따라 동적으로 결정된다.**
@@ -107,7 +105,7 @@ foo.bind(bar)(); // bar
 ```
 
 ### 22.2.1. 일반 함수 호출
-- 기본적으로 this에는 전역 객체가 바인딩된다.
+- **기본적으로 this에는 전역 객체가 바인딩된다.**
 ```javascript
 function foo() {
   console.log("foo's this: ", this);  // window
@@ -161,13 +159,12 @@ const obj = {
 
 obj.foo();
 ```
-- 메서드 내부의 중첩 함수나 콜백 함수의 this 바인딩을 메서드의 this 바인딩과 일치시키 위해서는 다음과 같이 하면 된다.
-
+- 메서드 내부의 중첩 함수나 콜백 함수의 this 바인딩을 메서드의 this 바인딩과 일치시키기 위해서는 다음과 같이 하면 된다.
 - 위 방법 이외에도 자바스크립트는 this를 명시적으로 바인딩할 수 있는 `Function.prototype.apply`, `Function.prototype.call`, `Function.prototype.bind` 메서드를 제공한다.
 - 또는 화살표 함수를 사용해 this 바인딩을 일치시킬 수도 있다.
 
 ### 22.2.2. 메서드 호출
-- 메서드 내부의 this에는 메서드를 호출한 객체, 즉 메서드를 호출할 때 메서드 이름 앞의 마침표(.) 연산자 앞에 기술한 객체가 바인딩 된다.
+- **메서드 내부의 this에는 메서드를 호출한 객체, 즉 메서드를 호출할 때 메서드 이름 앞의 마침표(.) 연산자 앞에 기술한 객체가 바인딩 된다.**
 - 주의할 점은 메서드를 호출한 객체에 바인딩 된다는 점이다.
 ```javascript
 const person = {
@@ -202,7 +199,7 @@ console.log(getName()); // ''
 // 브라우저 환경에서 window.name은 브라우저 창의 이름을 나타내는 빌트인 프로퍼티이며 기본값은 ''이다.
 // Node.js 환경에서 this.name은 undefined다.
 ```
-- 그러므로 메서드 내부의 this는 프로퍼티로 메서드를 가리키고 있는 객체와는 관계가 없고 메서드를 호출한 객체에 바인딩 된다.
+- 그러므로 **메서드 내부의 this는 프로퍼티로 메서드를 가리키고 있는 객체와는 관계가 없고 메서드를 호출한 객체에 바인딩 된다.**
 - 프로토타입 메서드 내부에서 사용된 this도 일반 메서드와 마찬가지로 해당 메서드를 호출한 객체에 바인딩된다.
 ```javascript
 function Person(name) {
@@ -225,7 +222,7 @@ console.log(Person.prototype.getName()); // ② Kim
 ```
 
 ### 22.2.3. 생성자 함수 호출
-- 생성자 함수 내부 this에는 생성자 함수가 (미래에) 생성할 인스턴스가 바인딩된다.
+- **생성자 함수 내부 this에는 생성자 함수가 (미래에) 생성할 인스턴스가 바인딩된다.**
 ```javascript
 // 생성자 함수
 function Circle(radius) {
@@ -246,7 +243,7 @@ console.log(circle2.getDiameter()); // 20
 ```
 
 ### 22.2.4. Function.prototype.apply/call/bind 메서드에 의한 간접 호출
-- 이들 메서드는 Function.prototype의 메서드이므로, 모든 함수가 상속받아 사용할 수 있다.
+- **이들 메서드는 `Function.prototype`의 메서드이므로, 모든 함수가 상속받아 사용할 수 있다.**
 - `Function.prototype.apply`, `Function.prototype.call`메서드는 사용할 객체와 인수 리스트를 인수로 전달받아 **함수를 호출한다.**
 ```
 /**
@@ -280,8 +277,6 @@ console.log(getThisBinding.apply(thisArg)); // {a: 1}
 console.log(getThisBinding.call(thisArg)); // {a: 1}
 ```
 - apply와 call 메서드는 함수를 호출하면서 첫 번째 인수로 전달한 특정객체를 호출한 함수의 this에 바인딩한다.
-<br />
-
 - `Function.prototype.bind` 메서드는 함수를 호출하지 않고, **첫 번째 인수로 전달한 값으로 this 바인딩이 교체된 함수를 새롭게 생성해 반환한다.**
 ```javascript
 function getThisBinding() {
