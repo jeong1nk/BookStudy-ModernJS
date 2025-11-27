@@ -2,8 +2,9 @@
 - **🏷️정규 표현식: 일정한 패턴을 가진 문자열의 집합을 표현하기 위해 사용하는 형식 언어(formal lauguage)**
 - 정규 표현식은 자바스크립트의 고유문법이 아니며, 대부분의 프로그래밍 언어와 코드 에디터에 내장되어 있다. 자바스크립트는 펄의 정규 표현식 문법을 ES3부터 도입했다.
 - 정규 표현식은 **문자열을 대상으로 패턴 매칭 기능**을 제공한다.
-- **패턴 매칭 기능: 특정 패턴과 일치하는 문자열을검색하거나 추출 또는 치환할 수 있는 기능**
+- **패턴 매칭 기능: 특정 패턴과 일치하는 문자열을 검색하거나 추출 또는 치환할 수 있는 기능**
 - 그 예로 휴대폰 전화번호가 유효한 전화번호인지 체크하는 경우가 있다.
+
 ```javascript
 // 사용자로부터 입력받은 휴대폰 전화번호
 const tel = '010-1234-567팔';
@@ -14,15 +15,17 @@ const regExp = /^\d{3}-\d{4}-\d{4}$/;
 // tel이 휴대폰 전화번호 패턴에 매칭하는지 테스트(확인)한다.
 regExp.test(tel); // -> false
 ```
+
 - 만약 정규 표현식이 없다면 반복문과 조건문을 통해 '첫 번째 문자가 숫자이고 이어지는 문자도 숫자이고...'와 같이 한 문자씩 연속해서 체크해야 한다.
 - 다만, 정규 표현식은 주석이나 공백을 허용하지 않고 여러 가지 기호를 혼합하여 사용하기 때문에 가독성이 좋지 않다는 문제가 있다.
 
 # 31.2. 정규 표현식의 생성
 - 정규 표현식 객체(RegExp 객체)를 생성하기 위해서는 정규 표현식 리터럴과 RegExp 생성자 함수를 사용할 수 있다.
 
-1. 정규 표현식 리터럴
+**1. 정규 표현식 리터럴**
 - `/regexp/i` : regexp = 패턴, i = 플래그 / = 시작,종료기호
 - 정규 표현식 리터럴은 패턴과 플래그로 구성된다.
+
 ```javascript
 const target = 'Is this all there is?';
 
@@ -34,7 +37,9 @@ const regexp = /is/i;
 regexp.test(target); // -> true
 ```
 
-2. RegExp 생성자 함수
+
+**2. RegExp 생성자 함수**
+
 ```javascript
 /**
  * parttern: 정규 표현식의 패턴
@@ -51,8 +56,10 @@ const regexp = new RegExp(/is/i); // ES6
 
 regexp.test(target); // -> true
 ```
+
 - RegExp 생성자 함수를 사용하여 RegExp 객체를 생성할 수도 있다.
 - RegExp 생성자 함수를 사용하면 변수를 사용해 동적으로 RegExp 객체를 생성할 수 있다.
+
 ```javascript
 const count = (str, char) => (str.match(new RegExp(char, 'gi')) ?? []).length;
 
@@ -61,21 +68,24 @@ count('Is this all there is?', 'xx'); // -> 0
 ```
 
 # 31.3 RegExp 메서드
-- 정규표현식을 사용하는 메서드는 RegExp.prototype.exec, RegExp.prototype.test, RegExp.prototype.match, String.prototype.replace, String.prototype.search, String.prototype.split 등이 있다. String.- 메서드는 32장에서 다룰 예정
+- 정규표현식을 사용하는 메서드는 `RegExp.prototype.exec`, `RegExp.prototype.test`, `RegExp.prototype.match`, `String.prototype.replace`, `String.prototype.search`, `String.prototype.split` 등이 있다. String.- 메서드는 32장에서 다룰 예정
 
 ### 31.3.1. RegExp.prototype.exec
-- 인수로 전달받은 문자열에 대해 정규 표현식의 패턴을 검색하여 매칭 결과를 배열로반환한다.
-- 매칭 결과가 없는 경우 null을 반환한다.
+- 인수로 전달받은 문자열에 대해 정규 표현식의 패턴을 검색하여 **매칭 결과를 배열로 반환한다.**
+- **매칭 결과가 없는 경우 null을 반환한다.**
+
 ```javascript
 const target = 'Is this all there is?';
 const regExp = /is/;
 
 regExp.exec(target); // -> ["is", index: 5, input: "Is this all there is?", groups: undefined]
 ```
+
 - 문자열 내의 모든 패턴을 검색하는 g 플래그를 지정해도 첫 번째 매칭 결과만 반환하므로 주의 
 
 ### 31.3.2. RegExp.prototype.test
-- 인수로 전달받은 문자열에 대해 정규 표현식의 패턴을 검색하여 매칭 결과를 불리언 값으로 반환한다.
+- 인수로 전달받은 문자열에 대해 정규 표현식의 패턴을 검색하여 **매칭 결과를 불리언 값으로 반환한다.**
+
 ```javascript
 const target = 'Is this all there is?';
 const regExp = /is/;
@@ -84,14 +94,17 @@ regExp.test(target); // -> true
 ```
 
 ### 31.3.3. String.prototype.match
-- String 표준 빌트인 객체가 제공하는 match 메서드는 대상 문자열과 인수로 전달받은 정규 표현식과의 매칭 결과를 배열로반환한다.
+- String 표준 빌트인 객체가 제공하는 **match 메서드는 대상 문자열과 인수로 전달받은 정규 표현식과의 매칭 결과를 배열로 반환한다.**
+
 ```javascript
 const target = 'Is this all there is?';
 const regExp = /is/;
 
 target.match(regExp); // -> ["is", index: 5, input: "Is this all there is?", groups: undefined]
 ```
-- exec 메서드는 문자열 내의 모든 패턴을 검색하는 g 플래그를 지정해도 첫 번째 매칭 결과만 반환한다. 하지만 String.prototype.match 메서드는 g 플래그가 지정되면모든 매칭 결과를 배열로 반환한다.
+
+- exec 메서드는 문자열 내의 모든 패턴을 검색하는 🏷️g 플래그를 지정해도 첫 번째 매칭 결과만 반환한다. 하지만 `String.prototype.match` 메서드는 g 플래그가 지정되면 모든 매칭 결과를 배열로 반환한다.
+
 ```javascript
 const target = 'Is this all there is?';
 const regExp = /is/g;
@@ -100,18 +113,19 @@ target.match(regExp); // -> ["is", "is"]
 ```
 
 # 31.4. 플래그
-- 플래그는 패턴과 함께 정규 표현식을구성하며, 정규표현식의 검색 방식을 설정하기 위해 사용한다.
+- 플래그는 패턴과 함께 정규 표현식을 구성하며, 정규표현식의 검색 방식을 설정하기 위해 사용한다.
 - 플래그는 총 6가지가 있지만 지금은 3개의 플래그를 살펴보자.
 
-1. i(ignore case)
+**1. i(ignore case)**
 - 대소문자를 구별하지 않고 패턴을 검색한다.
-2. g(Global)
+**2. g(Global)**
 - 대상 문자열 내에서 패턴과 일치하는 모든 문자열을 전역 검색한다.   
-3. m(Multi line)
-- 문자열의행이 바뀌더라도 패턴 검색을 계속한다.
+**3. m(Multi line)**
+- 문자열의 행이 바뀌더라도 패턴 검색을 계속한다.
 
 - 플래그는 옵션이므로 선택적으로 사용할 수 있다. 또한, 순서와 상관없이 하나 이상의 플래그를 동시에 설정할 수도 있다. 
-- 어떠한 플래그도 사용하지 않은 경우 대소문자를 구별해서 패턴을 검색한다. 그리고 문자열에 패턴 검색 매칭 대상이 1개 이상 존재해도 첫 번째 매칭한 대상만 검색하고 종료한다.
+- **어떠한 플래그도 사용하지 않은 경우 대소문자를 구별해서 패턴을 검색한다.** 그리고 문자열에 패턴 검색 매칭 대상이 1개 이상 존재해도 첫 번째 매칭한 대상만 검색하고 종료한다.
+
 ```javascript
 const target = 'Is this all there is?';
 
@@ -133,16 +147,20 @@ target.match(/is/ig);
 ```
 
 # 31.5. 패턴
-- 정규 표현식은 일정한 규칙(패턴)을 가진 문자열의 집합을 표현하기 위해 사용하는 형식 언어로, 패턴과 플래그로 구성된다.
-- 정규 표현식의 **패턴은 문자열의 일정한 규칙을 표현하기 위해 사용하며, 정규 표현식의 플래그는 정규 표현식의 검색 방식을 설정하기 위해 사용한다.**
-- 패턴은 /로 열고 닫으로 문자열의 따옴표는 생략한다. 따옴표를 포함하면 따옴표까지도 패턴에 포함되어 검색된다.
+- **🏷️정규 표현식: 일정한 규칙(패턴)을 가진 문자열의 집합을 표현하기 위해 사용하는 형식 언어로, 패턴과 플래그로 구성된다.**
+- **🏷️패턴: 문자열의 일정한 규칙을 표현하기 위해 사용**
+- **🏷️플래그: 정규 표현식의 검색 방식을 설정하기 위해 사용**
+<br />
+
+- 패턴은 /로 열고 닫으며 문자열의 따옴표는 생략한다. **따옴표를 포함하면 따옴표까지도 패턴에 포함되어 검색된다.**
 - 또한 패턴은 특별한 의미를 가지는 메타문자 또는 기호로 표현할 수 있다.
 - 어떤 문자열 내에 패턴과 일치하는 문자열이 존재할 때 '정규 표현식과 매치한다.'고 표현한다.
 
 # 31.5.1. 문자열 검색
-- 정규 표현식의 패턴에 문자 또느 문자열을 지정하면 검색 대상 문자열에서 패턴으로 지정한 문자 또는 문자열을 검색한다.
-- 정규 표현식을 생성 후, RegExp 메서드를 사용해 검색 대상 문자열과 정규 표현식의 매칭 결과를 구하면 검색이 수행된다.
-- 검색 대상 문자열과 플래그를 생략한정규 표현식의매칭 결과를 구하면 대소문자를  구별하여 정규 표현식과 매치한 첫 번째 결과만 반환한다.
+- 정규 표현식의 패턴에 문자 또는 문자열을 지정하면 검색 대상 문자열에서 패턴으로 지정한 문자 또는 문자열을 검색한다.
+- **정규 표현식을 생성 후, RegExp 메서드를 사용해 검색 대상 문자열과 정규 표현식의 매칭 결과를 구하면 검색이 수행된다.**
+- 검색 대상 문자열과 플래그를 생략한 정규 표현식의 매칭 결과를 구하면 대소문자를 구별하여 정규 표현식과 매치한 첫 번째 결과만 반환한다.
+
 ```javascript
 const target = 'Is this all there is?';
 
@@ -156,7 +174,9 @@ regExp.test(target); // -> true
 target.match(regExp);
 // -> ["is", index: 5, input: "Is this all there is?", groups: undefined]
 ```
-- 대소문자를 구별하지 않고 검색하려면 플래그 i를 사용한다.
+
+- **대소문자를 구별하지 않고 검색하려면 플래그 i를 사용한다.**
+
 ```javascript
 const target = 'Is this all there is?';
 
@@ -166,7 +186,9 @@ const regExp = /is/i;
 target.match(regExp);
 // -> ["Is", index: 0, input: "Is this all there is?", groups: undefined]
 ```
-- 검색 대상 문자열 내에서 패턴과 매치하는 모든 문자열을 전역 검색하려면 플래그 g를 사용한다.
+
+- **검색 대상 문자열 내에서 패턴과 매치하는 모든 문자열을 전역 검색하려면 플래그 g를 사용한다.**
+
 ```javascript
 const target = 'Is this all there is?';
 
@@ -178,8 +200,9 @@ target.match(regExp); // -> ["Is", "is", "is"]
 ```
 
 ### 31.5.2. 임의의 문자열 검색
-- .은 임의의 문자 한 개를 의미한다. 문자의 내용은 무엇이든 상관없다.
+- **🏷️.은 임의의 문자 한 개를 의미한다. 문자의 내용은 무엇이든 상관없다.**
 - 다음 예제의 경우 .을 3개 연속하여 패턴을 생성했으므로 문자의 내용과 상관없이 3자리 문자열과 매치한다.
+
 ```javascript
 const target = 'Is this all there is?';
 
@@ -190,8 +213,9 @@ target.match(regExp); // -> ["Is ", "thi", "s a", "ll ", "the", "re ", "is?"]
 ```
 
 ### 31.5.3. 반복 검색
-- {m,n}은 앞선 패턴(예제의 경우 A)이 최소 m번, 최소 n번 반복되는 문자열을 의미한다.
-- 콤마 뒤에 공백이 있으면 정상 동작하지 않으므로 주의
+- **🏷️{m,n}은 앞선 패턴(예제의 경우 A)이 최소 m번, 최소 n번 반복되는 문자열을 의미한다.**
+- **콤마 뒤에 공백이 있으면 정상 동작하지 않으므로 주의**
+
 ```javascript
 const target = 'A AA B BB Aa Bb AAA';
 
@@ -200,7 +224,9 @@ const regExp = /A{1,2}/g;
 
 target.match(regExp); // -> ["A", "AA", "A", "AA", "A"]
 ```
-- {n}은 앞선 패턴이 n번 반복되는 문자열을 의미한다. 즉, {n}은 {n,n}과 같다.
+
+- **🏷️{n}은 앞선 패턴이 n번 반복되는 문자열을 의미한다. 즉, {n}은 {n,n}과 같다.**
+
 ```javascript
 const target = 'A AA B BB Aa Bb AAA';
 
@@ -209,7 +235,9 @@ const regExp = /A{2}/g;
 
 target.match(regExp); // -> ["AA", "AA"]
 ```
-- {n,}은 앞선 패턴이 최소 n번 이상 반복되는 문자열을 의미한다.
+
+- **🏷️{n,}은 앞선 패턴이 최소 n번 이상 반복되는 문자열을 의미한다.**
+
 ```javascript
 const target = 'A AA B BB Aa Bb AAA';
 
@@ -218,8 +246,10 @@ const regExp = /A{2,}/g;
 
 target.match(regExp); // -> ["AA", "AAA"]
 ```
-- +는 앞선 패턴이 최소 한번 이상 반복되는 문자열을 의미한다. 즉, +는 {1,}과 같다.
+
+- **🏷️+는 앞선 패턴이 최소 한번 이상 반복되는 문자열을 의미한다. 즉, +는 {1,}과 같다.**
 - 다음 예제의 경우 A+는 앞선 패턴 'A'가 한번 이상 반복되는 문자열, 즉 'A'만으로 이루어진 문자열 'A', 'AA', 'AAA', ...와 매치한다.
+
 ```javascript
 const target = 'A AA B BB Aa Bb AAA';
 
@@ -228,8 +258,10 @@ const regExp = /A+/g;
 
 target.match(regExp); // -> ["A", "AA", "A", "AAA"]
 ```
-- ?는 앞선 패턴이 최대 한 번(0번 포함) 이상 반복되는 문자열을 의미한다. 즉, ?는 {0,1}과 같다.
+
+- **🏷️?는 앞선 패턴이 최대 한 번(0번 포함) 이상 반복되는 문자열을 의미한다. 즉, ?는 {0,1}과 같다.**
 - 다음 예제의 경우 /colou?r/는 'colo' 다음 'u'가 최대 한 번(0번 포함) 이상 반복되고 'r'이 이어지는 문자열 'color', 'colour'와 매치한다.
+
 ```javascript
 const target = 'color colour';
 
@@ -240,8 +272,9 @@ target.match(regExp); // -> ["color", "colour"]
 ```
 
 ### 31.5.4. OR 검색
-- |은 or의 의미를 갖는다.
+- **🏷️|은 or의 의미를 갖는다.**
 - 다음 예제의 /A|B/는 'A' 또는 'B'를 의미한다.
+
 ```javascript
 const target = 'A AA B BB Aa Bb';
 
@@ -250,7 +283,9 @@ const regExp = /A|B/g;
 
 target.match(regExp); // -> ["A", "A", "A", "B", "B", "B", "A", "B"]
 ```
-- 분해되지 않은 단어 레벨로 검색하기 위해서는 +를 함께 사용한다.
+
+- **분해되지 않은 단어 레벨로 검색하기 위해서는 +를 함께 사용한다.**
+
 ```javascript
 const target = 'A AA B BB Aa Bb';
 
@@ -260,7 +295,9 @@ const regExp = /A+|B+/g;
 
 target.match(regExp); // -> ["A", "AA", "B", "BB", "A", "B"]
 ```
+
 - 위 예제는 패턴을 or로 한 번 이상 반복하는 것인데 이를 간단히 표현하면 다음과 같다. [] 내의 문자는 or로 동작한다. 그 뒤에 +를 사용하면 앞선 패턴을 한 번 이상 반복한다.
+
 ```javascript
 const target = 'A AA B BB Aa Bb';
 
@@ -270,8 +307,10 @@ const regExp = /[AB]+/g;
 
 target.match(regExp); // -> ["A", "AA", "B", "BB", "A", "B"]
 ```
-- 범위를 지정하려면 [] 내에 -를 사용한다.
+
+- **범위를 지정하려면 [] 내에 -를 사용한다.**
 - 다음 예제의 경우 대문자 알파벳을 검색한다.
+
 ```javascript
 const target = 'A AA BB ZZ Aa Bb';
 
@@ -281,7 +320,9 @@ const regExp = /[A-Z]+/g;
 
 target.match(regExp); // -> ["A", "AA", "BB", "ZZ", "A", "B"]
 ```
+
 - 대소문자를 구별하지 않고 알파벳을 검색하는 방법은 다음과 같다.
+
 ```javascript
 const target = 'AA BB Aa Bb 12';
 
@@ -290,7 +331,9 @@ const regExp = /[A-Za-z]+/g;
 
 target.match(regExp); // -> ["AA", "BB", "Aa", "Bb"]
 ```
+
 - 숫자를 검색하는 방법은 다음과 같다.
+
 ```javascript
 const target = 'AA BB 12,345';
 
@@ -299,7 +342,9 @@ const regExp = /[0-9]+/g;
 
 target.match(regExp); // -> ["12", "345"]
 ```
+
 - 위 예제의 경우 쉼표 때문에 매칭 결과가 분리되므로 쉼표를 패턴에 포함시킨다.
+
 ```javascript
 const target = 'AA BB 12,345';
 
@@ -308,8 +353,10 @@ const regExp = /[0-9,]+/g;
 
 target.match(regExp); // -> ["12,345"]
 ```
-- 위 예제를 간단히 표현하면 다음과 같다. \d는 숫자를 의미한다. 즉, \d는 [0-9]와 같다.
+
+- 위 예제를 간단히 표현하면 다음과 같다. **🏷️\d는 숫자를 의미한다. 즉, \d는 [0-9]와 같다.**
 - \D는 \d와 반대로 동작한다. 즉, \D는 숫자가 아닌 문자를 의미한다.
+
 ```javascript
 const target = 'AA BB 12,345';
 
@@ -323,8 +370,10 @@ regExp = /[\D,]+/g;
 
 target.match(regExp); // -> ["AA BB ", ","]
 ```
-- \w는 알파벳, 숫자, 언더스코어를 의미한다. 즉, \w는 [A-Za-z0-9_]와 같다.
+
+- **🏷️\w는 알파벳, 숫자, 언더스코어를 의미한다. 즉, \w는 [A-Za-z0-9_]와 같다.**
 - \W는 \w와 반대로 동작한다. 즉, \W는 알파벳, 숫자, 언더스코어가 아닌 문자를 의미한다.
+
 ```javascript
 const target = 'Aa Bb 12,345 _$%&';
 
@@ -340,8 +389,9 @@ target.match(regExp); // -> [" ", " ", ",", " ", "$%&"]
 ```
 
 ### 31.5.5. NOT 검색
-- [...]내의 ^는 not의 의미를 갖는다. 예를 들어 [^0-9]는 숫자를 제외한 문자를 의미한다.
+- **🏷️[...]내의 ^는 not의 의미를 갖는다. 예를 들어 [^0-9]는 숫자를 제외한 문자를 의미한다.**
 - 따라서 [0-9]와 같은 의미의 \d와 반대로 동작하는 \D는 [^0-9]와 같고, [A-Za-z0-9_]와 같은 의미의 \w와 반대로 동작하는 \W는 [^A-Za-z0-9_]와 같다.
+
 ```javascript
 const target = 'AA BB 12 Aa Bb';
 
@@ -352,7 +402,8 @@ target.match(regExp); // -> ["AA BB ", " Aa Bb"]
 ```
 
 ### 31.5.6. 시작 위치로 검색
-- [...] 밖의 ^은 문자열의 시작을 의미한다. 단, [...]내의 ^은 not 의미를 가지므로 주의하기 바란다.
+- **🏷️[...] 밖의 ^은 문자열의 시작을 의미한다.** 단, [...]내의 ^은 not 의미를 가지므로 주의하기 바란다.
+
 ```javascript
 const target = 'https://poiemaweb.com';
 
@@ -363,7 +414,8 @@ regExp.test(target); // -> true
 ```
 
 ### 31.5.7. 마지막 위치로 검색
-- $는 문자열의 마지막을 의미한다.
+- **🏷️$는 문자열의 마지막을 의미한다.**
+
 ```javascript
 const target = 'https://poiemaweb.com';
 
@@ -377,19 +429,23 @@ regExp.test(target); // -> true
 ### 31.6.1. 특정 단어로 시작하는지 검사
 - 다음 예제는 검색 대상 문자열이 'http://' 또는 'https://'로 시작하는지 검사한다.
 - [...] 바깥의 ^은 문자열의 시작을 의미하고, ?은 앞선 패턴(다음 예제의 경우 's')이 최대 한 번(0번 포함)이상 반복되는지를 의미한다. 다시 말해, 검색 대상 문자열에앞선 패턴('s')이 있어도 없어도 매치된다.
+
 ```javascript
 const url = 'https://example.com';
 
 // 'http://' 또는 'https://'로 시작하는지 검사한다.
 /^https?:\/\//.test(url); // -> true
 ```
+
 - 다음 방법도 동일하게 동작한다.
+
 ```javascript
 /^(http|https):\/\//.test(url); // -> true
 ```
 
 ### 31.6.2. 특정 단어로 끝나는지 검사
 - 다음 예제는 검색 대상 문자열이 'html'로 끝나는지 검사한다. '$'는 문자열의 마지막을 의미한다.
+
 ```javascript
 const fileName = 'index.html';
 
@@ -401,6 +457,7 @@ const fileName = 'index.html';
 - 다음 예제는 검색 대상 문자열이 숫자로만 이루어진 문자열인지 검사한다.
 - [...] 바깥의 ^은 문자열의 시작을, '$'는 문자열의 마지막을 의미한다. \d는 숫자를 의미하고, +는 앞선 패턴이 최소 한 번 이상 반복되는 문자열을 의미한다.
 - 즉, 처음과 끝이 숫자이고 최소 한 번 이상 반복되는 문자열과 매치한다.
+
 ```javascript
 const target = '12345';
 
@@ -411,6 +468,7 @@ const target = '12345';
 ### 31.6.4. 하나 이상의 공색으로 시작하는지 검사
 - 다음 예제는 검색 대상 문자열이 하나이상의 공백으로 시작하는지 검사한다.
 - \s는 여러 가지 공백 문자(스페이스, 탭 등)을 의미한다. 즉, \s는 [\t\r\n\v\f]와 같은 의미다.
+
 ```javascript
 const target = ' Hi!';
 
@@ -421,6 +479,7 @@ const target = ' Hi!';
 ### 31.6.5. 아이디로 사용 가능한지 검사
 - 다음 예제는  검색 대상 문자열이 알파벳 대소문자 또는 숫자로 시작하고 끝나며 4 ~ 10자리인지 검사한다.
 - {4,10}은 앞선 패턴(알파벳 대소문자 또는 숫자)이 최소 4번, 최대 10번 반복되는 문자열을 의미한다. 즉, 4~10자리로 이루어진 알파벳 대소문자 또는 숫자를 의미한다.
+
 ```javascript
 const id = 'abc123';
 
@@ -430,18 +489,22 @@ const id = 'abc123';
 
 ### 31.6.6. 메일 주소 형식에 맞는지 검사
 - 다음 예제는 검색 대상 문자열이 메일주소 형식에 맞는지 검사한다.
+
 ```javascript
 const email = 'ungmo2@gmail.com';
 
 /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/.test(email); // -> true
 ```
+
 - 참고로 인터넷 메시지 형식 규격인 RFC 5322에맞는 정교한 패턴 매칭이 필요하다면 다음과 같이 무척 복잡한 패턴이 필요하다. 
- ```javascript
+
+```javascript
 (?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])
 ```
 
 ### 31.6.7. 핸드폰 번호 형식에 맞는지 검사
 - 다음 예제는 검색 대상 문자열이 핸드폰 번호 형식에 맞는지 검사한다.
+
 ```javascript
 const cellphone = '010-1234-5678';
 
@@ -450,17 +513,22 @@ const cellphone = '010-1234-5678';
 
 ### 31.6.8. 특수 문자 포함 여부 검사
 - 다음 예제는 검색 대상 문자열에 특수 문자가 포함되어 있는지 검사한다. 특수 문자는 A-Za-z0-9 이외의 문자다.
+
 ```javascript
 const target = 'abc#123';
 
 // A-Za-z0-9 이외의 문자가 있는지 검사한다.
 (/[^A-Za-z0-9]/gi).test(target); // -> true
 ```
+
 - 다음 방식으로 대체해 사용할 수도 있다. 이방식은 특수 문자를 선택적으로 검사할 수 있다는 장접이 있다.
+
 ```javascript
 (/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi).test(target); // -> true
 ```
+
 - 특수 문자를 제거할 때는 String.prototype.replace 메서드를 사용한다.
+
 ```javascript
 target.replace(/[^A-Za-z0-9]/gi, ''); // -> abc123
 ```
